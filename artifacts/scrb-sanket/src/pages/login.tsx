@@ -63,8 +63,8 @@ export default function Login() {
 
       <div className="z-10 w-full max-w-md">
         <div className="text-center mb-8">
-          <div className="w-20 h-20 bg-card border-2 border-primary rounded-full flex items-center justify-center mx-auto mb-6 shadow-[0_0_30px_hsl(var(--primary)/0.3)] p-3">
-            <img src={karnatakaEmblem} alt="Karnataka State Emblem" className="w-full h-full object-contain" />
+          <div className="mb-6">
+            <img src={karnatakaEmblem} alt="Karnataka State Emblem" className="w-32 h-32 mx-auto object-contain drop-shadow-[0_0_20px_hsl(var(--primary)/0.3)]" />
           </div>
           <h1 className="text-3xl font-bold tracking-widest text-primary-foreground mb-2">SCRB SANKET</h1>
           <h2 className="text-lg font-medium text-muted-foreground uppercase tracking-wider">AI Crime Intelligence Platform</h2>
