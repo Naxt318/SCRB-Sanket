@@ -4,7 +4,11 @@
   "private": true,
   "type": "module",
   "scripts": {
+<<<<<<< HEAD
     "dev": "cross-env NODE_ENV=development pnpm run build && cross-env NODE_ENV=development pnpm run start",
+=======
+    "dev": "export NODE_ENV=development && pnpm run build && pnpm run start",
+>>>>>>> 419b7921bc537ed60559cbd9c8a19c895ffbf2df
     "build": "node ./build.mjs",
     "start": "node --enable-source-maps ./dist/index.mjs",
     "typecheck": "tsc -p tsconfig.json --noEmit"
@@ -24,7 +28,10 @@
     "@types/cors": "^2.8.19",
     "@types/express": "^5.0.6",
     "@types/node": "catalog:",
+<<<<<<< HEAD
     "cross-env": "^7.0.3",
+=======
+>>>>>>> 419b7921bc537ed60559cbd9c8a19c895ffbf2df
     "esbuild": "0.27.3",
     "esbuild-plugin-pino": "^2.3.3",
     "pino-pretty": "^13.1.3",

@@ -72,6 +72,7 @@ export default defineConfig({
     fs: {
       strict: true,
     },
+<<<<<<< HEAD
     // In Replit, "/api" is routed to the API Server artifact automatically.
     // Locally there's no such router, so proxy it to the api-server dev port.
     proxy: {
@@ -80,6 +81,8 @@ export default defineConfig({
         changeOrigin: true,
       },
     },
+=======
+>>>>>>> 419b7921bc537ed60559cbd9c8a19c895ffbf2df
   },
   preview: {
     port,
