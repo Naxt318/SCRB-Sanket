@@ -1,5 +1,7 @@
 <div align="center">
 
+<img src="./attached_assets/karnataka-emblem.png" width="80" alt="Karnataka State Emblem">
+
 # 🛡️ SCRB Sanket
 
 ### AI-powered conversational crime intelligence for the Karnataka State Crime Records Bureau
@@ -14,14 +16,15 @@
   <img alt="react" src="https://img.shields.io/badge/React-18-61DAFB?style=flat-square&logo=react&logoColor=black">
   <img alt="vite" src="https://img.shields.io/badge/Vite-7-646CFF?style=flat-square&logo=vite&logoColor=white">
   <img alt="typescript" src="https://img.shields.io/badge/TypeScript-5.9-3178C6?style=flat-square&logo=typescript&logoColor=white">
-  <img alt="express" src="https://img.shields.io/badge/Express-5-000000?style=flat-square&logo=express&logoColor=white">
-  <img alt="postgres" src="https://img.shields.io/badge/PostgreSQL-Drizzle_ORM-4169E1?style=flat-square&logo=postgresql&logoColor=white">
+  <img alt="firebase" src="https://img.shields.io/badge/Firebase-Auth_%2B_Hosting-FFCA28?style=flat-square&logo=firebase&logoColor=black">
   <img alt="tailwind" src="https://img.shields.io/badge/Tailwind_CSS-4-06B6D4?style=flat-square&logo=tailwindcss&logoColor=white">
   <img alt="pnpm" src="https://img.shields.io/badge/pnpm-workspaces-F69220?style=flat-square&logo=pnpm&logoColor=white">
 </p>
 
 > ⚠️ **Demo environment — synthetic data only, no real case records.**
 > Nothing in this repo touches real CCTNS/SCRB data, real names, or real ongoing investigations.
+
+### 🔗 [**Live Demo →**](https://scrb-sanket.web.app) &nbsp;·&nbsp; [**GitHub Repo →**](https://github.com/Naxt318/SCRB-Sanket)
 
 </div>
 
@@ -35,6 +38,7 @@
 - [Architecture](#-architecture)
 - [Tech stack](#-tech-stack)
 - [Getting started](#-getting-started)
+- [Deployment](#-deployment)
 - [Project structure](#-project-structure)
 - [Compliance & disclaimers](#-compliance--disclaimers)
 
@@ -159,20 +163,25 @@ on Firebase's free **Spark** plan.
 
 ## 🚀 Getting started
 
-```bash
-cp artifacts/scrb-sanket/.env.example artifacts/scrb-sanket/.env
-# fill in your Firebase project's web config, see FIREBASE-DEPLOY.md
-pnpm install
-pnpm dev
-```
+**[Try the live demo →](https://scrb-sanket.web.app)** 
 
-| Service | URL |
-|---|---|
-| 🖥️ Frontend (and everything else — no separate API process) | `http://localhost:26259` |
+📘 See **[`credentials.md`](./FIREBASE-DEPLOY.md)** for id and pwd also its initially loaded 
+<br>
 
-📘 See **[`FIREBASE-DEPLOY.md`](./FIREBASE-DEPLOY.md)** for full setup —
-creating a Firebase project, enabling Email/Password sign-in, creating the
-demo accounts, and deploying.
+## ☁️ Deployment
+
+Since the app is fully static (no server, no database), it can be hosted
+on either of these — pick whichever is easier for you:
+
+| Host | Command | Notes |
+|---|---|---|
+| **Firebase Hosting** | `firebase deploy --only hosting` | Also hosts Firebase Authentication for login. See `FIREBASE-DEPLOY.md`. |
+| **Vercel** | `git push` (auto-deploys) | Uses the `vercel.json` at the repo root. Add the six `VITE_FIREBASE_*` variables under Project Settings → Environment Variables so login still works. |
+
+Both point at the same build output
+(`artifacts/scrb-sanket/dist/public`) and the same Firebase project for
+auth — you can even run both at once and share whichever link is more
+convenient.
 
 <br>
 
@@ -205,4 +214,3 @@ deployment would need to handle real crime data under the **DPDP Act,
 *Built as a prototype — official, trustworthy, command-center feel.*
 
 </div>
-

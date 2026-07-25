@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { ShieldAlert, Shield } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import karnatakaEmblem from '@/assets/karnataka-emblem.png';
 
 function friendlyAuthError(err: unknown): string {
   const code = (err as { code?: string })?.code ?? '';
@@ -62,8 +63,8 @@ export default function Login() {
 
       <div className="z-10 w-full max-w-md">
         <div className="text-center mb-8">
-          <div className="w-20 h-20 bg-card border-2 border-primary rounded-full flex items-center justify-center mx-auto mb-6 shadow-[0_0_30px_hsl(var(--primary)/0.3)]">
-            <Shield className="w-10 h-10 text-secondary" />
+          <div className="w-20 h-20 bg-card border-2 border-primary rounded-full flex items-center justify-center mx-auto mb-6 shadow-[0_0_30px_hsl(var(--primary)/0.3)] p-3">
+            <img src={karnatakaEmblem} alt="Karnataka State Emblem" className="w-full h-full object-contain" />
           </div>
           <h1 className="text-3xl font-bold tracking-widest text-primary-foreground mb-2">SCRB SANKET</h1>
           <h2 className="text-lg font-medium text-muted-foreground uppercase tracking-wider">AI Crime Intelligence Platform</h2>
