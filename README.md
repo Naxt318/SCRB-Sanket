@@ -118,28 +118,31 @@ connection to real cases, investigations, or people.
 flowchart LR
     subgraph Browser
         UI["React + Vite frontend<br/>chat · map · network · trends"]
+        subgraph Local["src/local-api (in-browser)"]
+            Router["Local API router<br/>(intercepts /api/* calls)"]
+            Chat["Chat engine<br/>(rule-based NL parsing)"]
+            Routes["FIR / audit / network handlers"]
+        end
+        Data[("Synthetic FIR dataset<br/>in-memory")]
     end
 
     subgraph Firebase
         Auth["Firebase Authentication<br/>(Email/Password)"]
-        subgraph Fn["Cloud Function: api"]
-            Verify["ID-token verification<br/>(firebase-admin)"]
-            Chat["Chat engine<br/>(rule-based NL parsing)"]
-            Routes["FIR / audit / network routes"]
-        end
-        Hosting["Firebase Hosting<br/>rewrites /api/** → api"]
+        Hosting["Firebase Hosting<br/>static files only"]
     end
 
-    Data[("Synthetic FIR dataset<br/>in-memory")]
-
     UI -->|"sign in"| Auth
-    UI -->|"/api/* + ID token"| Hosting
-    Hosting --> Fn
-    Verify --> Chat
-    Verify --> Routes
+    UI -->|"/api/*"| Router
+    Router --> Chat
+    Router --> Routes
     Chat --> Data
     Routes --> Data
+    Hosting -.->|"serves"| UI
 ```
+
+There's no backend server or Cloud Function — every "/api/*" call is
+answered inside the browser by `src/local-api/`, which is why this runs
+on Firebase's free **Spark** plan.
 
 <br>
 
@@ -148,7 +151,7 @@ flowchart LR
 | Layer | Tools |
 |---|---|
 | **Frontend** | React · Vite · Tailwind CSS · Recharts · Leaflet · `react-force-graph` · `wouter` |
-| **Backend** | Firebase Cloud Functions (Express) · Firebase Admin SDK |
+| **"Backend"** | Plain TypeScript running in the browser (`src/local-api/`) — no server |
 | **Auth** | Firebase Authentication (Email/Password) |
 | **Monorepo** | pnpm workspaces · TypeScript throughout |
 
@@ -165,8 +168,7 @@ pnpm dev
 
 | Service | URL |
 |---|---|
-| 🖥️ Frontend | `http://localhost:26259` |
-| ⚙️ API (via emulators) | `http://localhost:5000/api/*` |
+| 🖥️ Frontend (and everything else — no separate API process) | `http://localhost:26259` |
 
 📘 See **[`FIREBASE-DEPLOY.md`](./FIREBASE-DEPLOY.md)** for full setup —
 creating a Firebase project, enabling Email/Password sign-in, creating the
@@ -179,13 +181,12 @@ demo accounts, and deploying.
 ```
 artifacts/
   scrb-sanket/       # React + Vite frontend
+    src/local-api/   # Chat engine, synthetic dataset, local /api/* router
   mockup-sandbox/    # Component design sandbox
-firebase/
-  functions/         # Cloud Function: chat engine, synthetic dataset, auth verification
 lib/
   api-spec/          # API contract
   api-zod/           # Generated Zod validators
-  api-client-react/  # Generated typed API client
+  api-client-react/  # Generated typed API client (with a local-handler hook)
 ```
 
 <br>

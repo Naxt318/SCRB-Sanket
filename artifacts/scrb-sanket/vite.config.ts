@@ -63,16 +63,6 @@ export default defineConfig(async ({ mode }) => {
       fs: {
         strict: true,
       },
-      // Firebase Hosting normally rewrites /api/** to the Cloud Function
-      // (see /firebase.json). Locally, run `firebase emulators:start` and
-      // this proxies to the Hosting emulator, which applies that same
-      // rewrite — so `pnpm dev` here still gets working /api/* calls.
-      proxy: {
-        '/api': {
-          target: env.VITE_DEV_API_PROXY_TARGET ?? 'http://localhost:5000',
-          changeOrigin: true,
-        },
-      },
     },
     preview: {
       port,

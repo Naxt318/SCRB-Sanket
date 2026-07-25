@@ -19,6 +19,29 @@ let _baseUrl: string | null = null;
 let _authTokenGetter: AuthTokenGetter | null = null;
 
 /**
+ * A local handler intercepts requests before they hit the network and
+ * answers them in-process instead — e.g. serving an app's "backend" as
+ * plain browser-side logic (no server, no Cloud Functions, no Spark/Blaze
+ * plan required). Return `null` to let a given request fall through to a
+ * real `fetch()`.
+ */
+export type LocalHandlerResult = { status: number; data: unknown } | null;
+export type LocalHandler = (
+  url: string,
+  init: RequestInit & { method: string },
+) => Promise<LocalHandlerResult> | LocalHandlerResult;
+
+let _localHandler: LocalHandler | null = null;
+
+/**
+ * Register a function that answers API requests locally instead of over
+ * the network. Pass `null` to clear it and resume real `fetch()` calls.
+ */
+export function setLocalHandler(handler: LocalHandler | null): void {
+  _localHandler = handler;
+}
+
+/**
  * Set a base URL that is prepended to every relative request URL
  * (i.e. paths that start with `/`).
  *
@@ -359,6 +382,26 @@ export async function customFetch<T = unknown>(
   }
 
   const requestInfo = { method, url: resolveUrl(input) };
+
+  if (_localHandler) {
+    const bodyText = typeof init.body === "string" ? init.body : undefined;
+    const localResult = await _localHandler(requestInfo.url, {
+      ...init,
+      method,
+      headers,
+      body: bodyText,
+    });
+
+    if (localResult) {
+      if (localResult.status >= 200 && localResult.status < 300) {
+        return localResult.data as T;
+      }
+      const fakeResponse = new Response(JSON.stringify(localResult.data), {
+        status: localResult.status,
+      });
+      throw new ApiError(fakeResponse, localResult.data, requestInfo);
+    }
+  }
 
   const response = await fetch(input, { ...init, method, headers });
 

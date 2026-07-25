@@ -5,7 +5,7 @@ import {
   signOut as firebaseSignOut,
   type User as FirebaseUser,
 } from 'firebase/auth';
-import { User, getMe, setAuthTokenGetter } from '@workspace/api-client-react';
+import { User, getMe } from '@workspace/api-client-react';
 import { useLocation } from 'wouter';
 import { auth } from '@/lib/firebase';
 
@@ -18,11 +18,6 @@ interface AuthContextType {
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
-
-// Every API call goes through this getter to attach a fresh Firebase ID
-// token — see custom-fetch.ts. Registered once, outside the component, so
-// it's active even for requests fired before the provider mounts.
-setAuthTokenGetter(() => auth.currentUser?.getIdToken() ?? null);
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
@@ -38,8 +33,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       }
 
       try {
-        // The backend verifies the ID token and returns this account's
-        // SCRB profile (role, district, badge number).
+        // Looks up this signed-in email's SCRB profile (role, district,
+        // badge number) locally — see src/local-api/router.ts.
         const profile = await getMe();
         setUser(profile);
       } catch {

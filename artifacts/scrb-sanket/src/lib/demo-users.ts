@@ -3,8 +3,8 @@
 // check happens entirely through Firebase Auth — create matching accounts
 // in the Firebase console (Authentication tab) with these emails.
 //
-// Keep this in sync with the matching copy in
-// firebase/functions/src/lib/demo-users.ts.
+// Keep the emails here in sync with the full profiles (role, district,
+// badge) in src/local-api/demo-profiles.ts.
 
 export interface DemoAccount {
   email: string;
