@@ -22,6 +22,8 @@
 > ⚠️ **Demo environment — synthetic data only, no real case records.**
 > Nothing in this repo touches real CCTNS/SCRB data, real names, or real ongoing investigations.
 
+### 🔗 [**Live Demo →**](https://scrb-sanket.web.app) &nbsp;·&nbsp; [**GitHub Repo →**](https://github.com/Naxt318/SCRB-Sanket)
+
 </div>
 
 <br>
@@ -159,6 +161,10 @@ on Firebase's free **Spark** plan.
 
 ## 🚀 Getting started
 
+**Just want to try it?** → **[scrb-sanket.web.app](https://scrb-sanket.web.app)** — log in with any of the three demo accounts listed in [`FIREBASE-DEPLOY.md`](./FIREBASE-DEPLOY.md#one-time-setup).
+
+**Want to run it locally / contribute?**
+
 ```bash
 cp artifacts/scrb-sanket/.env.example artifacts/scrb-sanket/.env
 # fill in your Firebase project's web config, see FIREBASE-DEPLOY.md
@@ -166,9 +172,10 @@ pnpm install
 pnpm dev
 ```
 
-| Service | URL |
+| Environment | URL |
 |---|---|
-| 🖥️ Frontend (and everything else — no separate API process) | `http://localhost:26259` |
+| 🌐 Live (Firebase Hosting) | [scrb-sanket.web.app](https://scrb-sanket.web.app) |
+| 🖥️ Local dev (no separate API process needed) | `http://localhost:26259` |
 
 📘 See **[`FIREBASE-DEPLOY.md`](./FIREBASE-DEPLOY.md)** for full setup —
 creating a Firebase project, enabling Email/Password sign-in, creating the
