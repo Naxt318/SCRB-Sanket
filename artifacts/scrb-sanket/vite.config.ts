@@ -7,25 +7,17 @@ import runtimeErrorOverlay from '@replit/vite-plugin-runtime-error-modal';
 
 const rawPort = process.env.PORT;
 
-if (!rawPort) {
-  throw new Error(
-    'PORT environment variable is required but was not provided.',
-  );
-}
-
-const port = Number(rawPort);
+// PORT is only needed to run the dev/preview server (locally or on Replit).
+// A production `vite build` (e.g. on Vercel) doesn't start a server at all,
+// so we default rather than fail the build when it's unset.
+const port = rawPort ? Number(rawPort) : 5173;
 
 if (Number.isNaN(port) || port <= 0) {
   throw new Error(`Invalid PORT value: "${rawPort}"`);
 }
 
-const basePath = process.env.BASE_PATH;
-
-if (!basePath) {
-  throw new Error(
-    'BASE_PATH environment variable is required but was not provided.',
-  );
-}
+// Same reasoning for BASE_PATH — default to root ("/") when unset.
+const basePath = process.env.BASE_PATH ?? '/';
 
 export default defineConfig({
   base: basePath,
@@ -72,7 +64,6 @@ export default defineConfig({
     fs: {
       strict: true,
     },
-<<<<<<< HEAD
     // In Replit, "/api" is routed to the API Server artifact automatically.
     // Locally there's no such router, so proxy it to the api-server dev port.
     proxy: {
@@ -81,8 +72,6 @@ export default defineConfig({
         changeOrigin: true,
       },
     },
-=======
->>>>>>> 419b7921bc537ed60559cbd9c8a19c895ffbf2df
   },
   preview: {
     port,
