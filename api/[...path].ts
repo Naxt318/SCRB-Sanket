@@ -9,7 +9,7 @@
 // This keeps the frontend code unchanged — it still calls relative
 // "/api/..." URLs, and Vercel transparently proxies them here.
 
-export const config = { runtime: 'edge' };
+
 
 const HOP_BY_HOP_HEADERS = new Set([
   'connection',
