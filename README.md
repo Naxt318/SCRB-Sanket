@@ -14,8 +14,7 @@
   <img alt="react" src="https://img.shields.io/badge/React-18-61DAFB?style=flat-square&logo=react&logoColor=black">
   <img alt="vite" src="https://img.shields.io/badge/Vite-7-646CFF?style=flat-square&logo=vite&logoColor=white">
   <img alt="typescript" src="https://img.shields.io/badge/TypeScript-5.9-3178C6?style=flat-square&logo=typescript&logoColor=white">
-  <img alt="express" src="https://img.shields.io/badge/Express-5-000000?style=flat-square&logo=express&logoColor=white">
-  <img alt="postgres" src="https://img.shields.io/badge/PostgreSQL-Drizzle_ORM-4169E1?style=flat-square&logo=postgresql&logoColor=white">
+  <img alt="firebase" src="https://img.shields.io/badge/Firebase-Auth_%2B_Hosting-FFCA28?style=flat-square&logo=firebase&logoColor=black">
   <img alt="tailwind" src="https://img.shields.io/badge/Tailwind_CSS-4-06B6D4?style=flat-square&logo=tailwindcss&logoColor=white">
   <img alt="pnpm" src="https://img.shields.io/badge/pnpm-workspaces-F69220?style=flat-square&logo=pnpm&logoColor=white">
 </p>
@@ -35,6 +34,7 @@
 - [Architecture](#-architecture)
 - [Tech stack](#-tech-stack)
 - [Getting started](#-getting-started)
+- [Deployment](#-deployment)
 - [Project structure](#-project-structure)
 - [Compliance & disclaimers](#-compliance--disclaimers)
 
@@ -176,6 +176,23 @@ demo accounts, and deploying.
 
 <br>
 
+## ☁️ Deployment
+
+Since the app is fully static (no server, no database), it can be hosted
+on either of these — pick whichever is easier for you:
+
+| Host | Command | Notes |
+|---|---|---|
+| **Firebase Hosting** | `firebase deploy --only hosting` | Also hosts Firebase Authentication for login. See `FIREBASE-DEPLOY.md`. |
+| **Vercel** | `git push` (auto-deploys) | Uses the `vercel.json` at the repo root. Add the six `VITE_FIREBASE_*` variables under Project Settings → Environment Variables so login still works. |
+
+Both point at the same build output
+(`artifacts/scrb-sanket/dist/public`) and the same Firebase project for
+auth — you can even run both at once and share whichever link is more
+convenient.
+
+<br>
+
 ## 📁 Project structure
 
 ```
@@ -205,4 +222,3 @@ deployment would need to handle real crime data under the **DPDP Act,
 *Built as a prototype — official, trustworthy, command-center feel.*
 
 </div>
-
