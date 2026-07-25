@@ -1,0 +1,764 @@
+openapi: 3.1.0
+info:
+  # Do not change the title, if the title changes, the import paths will be broken
+  title: Api
+  version: 0.1.0
+  description: SCRB Sanket — AI Crime Intelligence Platform API
+servers:
+  - url: /api
+    description: Base API path
+tags:
+  - name: health
+    description: Health operations
+  - name: auth
+    description: Authentication
+  - name: chat
+    description: AI chat interface
+  - name: firs
+    description: FIR records and analytics
+  - name: network
+    description: Criminal network analysis
+  - name: audit
+    description: Query audit log
+paths:
+  /healthz:
+    get:
+      operationId: healthCheck
+      tags: [health]
+      summary: Health check
+      responses:
+        "200":
+          description: Healthy
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HealthStatus"
+
+  /auth/login:
+    post:
+      operationId: login
+      tags: [auth]
+      summary: Mock login
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/LoginInput"
+      responses:
+        "200":
+          description: Logged in
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AuthResponse"
+        "401":
+          description: Invalid credentials
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /auth/me:
+    get:
+      operationId: getMe
+      tags: [auth]
+      summary: Get current user
+      responses:
+        "200":
+          description: Current user
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+
+  /chat:
+    post:
+      operationId: sendChatMessage
+      tags: [chat]
+      summary: Send a chat message and receive AI response
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ChatMessageInput"
+      responses:
+        "200":
+          description: AI response with supporting data
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ChatResponse"
+
+  /chat/history:
+    get:
+      operationId: getChatHistory
+      tags: [chat]
+      summary: Get conversation history for current session
+      responses:
+        "200":
+          description: Chat history
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/ChatMessage"
+
+    delete:
+      operationId: clearChatHistory
+      tags: [chat]
+      summary: Clear chat history
+      responses:
+        "200":
+          description: Cleared
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SuccessResponse"
+
+  /firs:
+    get:
+      operationId: getFirs
+      tags: [firs]
+      summary: Get FIR records with optional filters
+      parameters:
+        - name: district
+          in: query
+          schema:
+            type: string
+        - name: crimeType
+          in: query
+          schema:
+            type: string
+        - name: startDate
+          in: query
+          schema:
+            type: string
+        - name: endDate
+          in: query
+          schema:
+            type: string
+        - name: limit
+          in: query
+          schema:
+            type: integer
+        - name: offset
+          in: query
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: FIR records
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FirListResponse"
+
+  /firs/summary:
+    get:
+      operationId: getFirSummary
+      tags: [firs]
+      summary: Dashboard summary stats
+      responses:
+        "200":
+          description: Summary
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FirSummary"
+
+  /firs/hotspots:
+    get:
+      operationId: getHotspots
+      tags: [firs]
+      summary: Crime hotspot data for map
+      parameters:
+        - name: crimeType
+          in: query
+          schema:
+            type: string
+        - name: startDate
+          in: query
+          schema:
+            type: string
+        - name: endDate
+          in: query
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Hotspot data
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Hotspot"
+
+  /firs/trends:
+    get:
+      operationId: getTrends
+      tags: [firs]
+      summary: Crime trend time series with forecast
+      parameters:
+        - name: crimeType
+          in: query
+          schema:
+            type: string
+        - name: district
+          in: query
+          schema:
+            type: string
+        - name: months
+          in: query
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Trend data
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TrendResponse"
+
+  /firs/by-district:
+    get:
+      operationId: getFirsByDistrict
+      tags: [firs]
+      summary: Crime counts grouped by district
+      responses:
+        "200":
+          description: District breakdown
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/DistrictStat"
+
+  /firs/by-type:
+    get:
+      operationId: getFirsByType
+      tags: [firs]
+      summary: Crime counts grouped by type
+      responses:
+        "200":
+          description: Crime type breakdown
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/CrimeTypeStat"
+
+  /firs/early-warnings:
+    get:
+      operationId: getEarlyWarnings
+      tags: [firs]
+      summary: Districts with rising crime trends (early warning cards)
+      responses:
+        "200":
+          description: Early warning data
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/EarlyWarning"
+
+  /network:
+    get:
+      operationId: getNetwork
+      tags: [network]
+      summary: Criminal network graph (nodes and edges)
+      parameters:
+        - name: personId
+          in: query
+          schema:
+            type: string
+        - name: crimeType
+          in: query
+          schema:
+            type: string
+        - name: district
+          in: query
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Network graph
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/NetworkGraph"
+
+  /audit/log:
+    get:
+      operationId: getAuditLog
+      tags: [audit]
+      summary: Get query audit log (supervisor/admin only)
+      parameters:
+        - name: limit
+          in: query
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Audit entries
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/AuditEntry"
+
+  /meta/districts:
+    get:
+      operationId: getDistricts
+      tags: [firs]
+      summary: List of districts in the dataset
+      responses:
+        "200":
+          description: Districts
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/District"
+
+  /meta/crime-types:
+    get:
+      operationId: getCrimeTypes
+      tags: [firs]
+      summary: List of crime types in the dataset
+      responses:
+        "200":
+          description: Crime types
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: string
+
+components:
+  schemas:
+    HealthStatus:
+      type: object
+      required: [status]
+      properties:
+        status:
+          type: string
+
+    ErrorResponse:
+      type: object
+      required: [error]
+      properties:
+        error:
+          type: string
+
+    SuccessResponse:
+      type: object
+      required: [success]
+      properties:
+        success:
+          type: boolean
+
+    LoginInput:
+      type: object
+      required: [username, password]
+      properties:
+        username:
+          type: string
+        password:
+          type: string
+
+    AuthResponse:
+      type: object
+      required: [token, user]
+      properties:
+        token:
+          type: string
+        user:
+          $ref: "#/components/schemas/User"
+
+    User:
+      type: object
+      required: [id, name, role, district]
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        role:
+          type: string
+          enum: [investigator, supervisor, admin]
+        district:
+          type: string
+        badgeNumber:
+          type: string
+
+    ChatMessageInput:
+      type: object
+      required: [message, language]
+      properties:
+        message:
+          type: string
+        language:
+          type: string
+          enum: [english, kannada]
+        sessionId:
+          type: string
+
+    ChatResponse:
+      type: object
+      required: [id, role, content, reasoning, sources, timestamp]
+      properties:
+        id:
+          type: string
+        role:
+          type: string
+        content:
+          type: string
+        reasoning:
+          type: array
+          items:
+            type: string
+        sources:
+          type: array
+          items:
+            type: string
+        timestamp:
+          type: string
+        chartData:
+          $ref: "#/components/schemas/ChartData"
+        mapData:
+          type: array
+          items:
+            $ref: "#/components/schemas/Hotspot"
+        firIds:
+          type: array
+          items:
+            type: string
+
+    ChatMessage:
+      type: object
+      required: [id, role, content, timestamp]
+      properties:
+        id:
+          type: string
+        role:
+          type: string
+          enum: [user, assistant]
+        content:
+          type: string
+        language:
+          type: string
+        timestamp:
+          type: string
+        reasoning:
+          type: array
+          items:
+            type: string
+        sources:
+          type: array
+          items:
+            type: string
+        chartData:
+          $ref: "#/components/schemas/ChartData"
+        mapData:
+          type: array
+          items:
+            $ref: "#/components/schemas/Hotspot"
+
+    ChartData:
+      type: object
+      required: [type, labels, datasets]
+      properties:
+        type:
+          type: string
+          enum: [bar, line, pie]
+        labels:
+          type: array
+          items:
+            type: string
+        datasets:
+          type: array
+          items:
+            $ref: "#/components/schemas/ChartDataset"
+        title:
+          type: string
+
+    ChartDataset:
+      type: object
+      required: [label, data]
+      properties:
+        label:
+          type: string
+        data:
+          type: array
+          items:
+            type: number
+
+    Fir:
+      type: object
+      required: [id, firNumber, district, policeStation, crimeType, dateOfIncident, status]
+      properties:
+        id:
+          type: string
+        firNumber:
+          type: string
+        district:
+          type: string
+        policeStation:
+          type: string
+        crimeType:
+          type: string
+        subType:
+          type: string
+        dateOfIncident:
+          type: string
+        timeOfIncident:
+          type: string
+        status:
+          type: string
+          enum: [registered, under_investigation, chargesheeted, closed]
+        latitude:
+          type: number
+        longitude:
+          type: number
+        personIds:
+          type: array
+          items:
+            type: string
+        description:
+          type: string
+        isSynthetic:
+          type: boolean
+
+    FirListResponse:
+      type: object
+      required: [data, total, limit, offset]
+      properties:
+        data:
+          type: array
+          items:
+            $ref: "#/components/schemas/Fir"
+        total:
+          type: integer
+        limit:
+          type: integer
+        offset:
+          type: integer
+
+    FirSummary:
+      type: object
+      required: [totalFirs, openCases, closedCases, topCrimeType, topDistrict, recentCount]
+      properties:
+        totalFirs:
+          type: integer
+        openCases:
+          type: integer
+        closedCases:
+          type: integer
+        topCrimeType:
+          type: string
+        topDistrict:
+          type: string
+        recentCount:
+          type: integer
+        byStatus:
+          type: array
+          items:
+            $ref: "#/components/schemas/StatusStat"
+
+    StatusStat:
+      type: object
+      required: [status, count]
+      properties:
+        status:
+          type: string
+        count:
+          type: integer
+
+    Hotspot:
+      type: object
+      required: [lat, lng, intensity, district, crimeType, count]
+      properties:
+        lat:
+          type: number
+        lng:
+          type: number
+        intensity:
+          type: number
+        district:
+          type: string
+        crimeType:
+          type: string
+        count:
+          type: integer
+        label:
+          type: string
+
+    TrendResponse:
+      type: object
+      required: [series, forecast, earlyWarning]
+      properties:
+        series:
+          type: array
+          items:
+            $ref: "#/components/schemas/TrendPoint"
+        forecast:
+          type: array
+          items:
+            $ref: "#/components/schemas/TrendPoint"
+        earlyWarning:
+          type: boolean
+        trendDirection:
+          type: string
+          enum: [rising, falling, stable]
+        percentChange:
+          type: number
+
+    TrendPoint:
+      type: object
+      required: [month, count]
+      properties:
+        month:
+          type: string
+        count:
+          type: number
+        isForecast:
+          type: boolean
+
+    DistrictStat:
+      type: object
+      required: [district, count]
+      properties:
+        district:
+          type: string
+        count:
+          type: integer
+        breakdown:
+          type: array
+          items:
+            $ref: "#/components/schemas/CrimeTypeStat"
+
+    CrimeTypeStat:
+      type: object
+      required: [crimeType, count]
+      properties:
+        crimeType:
+          type: string
+        count:
+          type: integer
+        trend:
+          type: string
+
+    EarlyWarning:
+      type: object
+      required: [district, crimeType, percentIncrease, recentCount, message]
+      properties:
+        district:
+          type: string
+        crimeType:
+          type: string
+        percentIncrease:
+          type: number
+        recentCount:
+          type: integer
+        previousCount:
+          type: integer
+        message:
+          type: string
+        severity:
+          type: string
+          enum: [low, medium, high, critical]
+
+    NetworkNode:
+      type: object
+      required: [id, label, type, caseCount]
+      properties:
+        id:
+          type: string
+        label:
+          type: string
+        type:
+          type: string
+          enum: [person, case, location]
+        caseCount:
+          type: integer
+        district:
+          type: string
+        crimeTypes:
+          type: array
+          items:
+            type: string
+        group:
+          type: integer
+
+    NetworkEdge:
+      type: object
+      required: [source, target, relationship]
+      properties:
+        source:
+          type: string
+        target:
+          type: string
+        relationship:
+          type: string
+          enum: [co_accused, same_mo, shared_location, linked_case]
+        caseId:
+          type: string
+
+    NetworkGraph:
+      type: object
+      required: [nodes, edges]
+      properties:
+        nodes:
+          type: array
+          items:
+            $ref: "#/components/schemas/NetworkNode"
+        edges:
+          type: array
+          items:
+            $ref: "#/components/schemas/NetworkEdge"
+
+    AuditEntry:
+      type: object
+      required: [id, userId, userName, query, timestamp, resultsCount]
+      properties:
+        id:
+          type: string
+        userId:
+          type: string
+        userName:
+          type: string
+        role:
+          type: string
+        query:
+          type: string
+        timestamp:
+          type: string
+        resultsCount:
+          type: integer
+        ipAddress:
+          type: string
+
+    District:
+      type: object
+      required: [id, name, lat, lng]
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        lat:
+          type: number
+        lng:
+          type: number
+        stationCount:
+          type: integer

@@ -1,0 +1,130 @@
+import React, { useState } from 'react';
+import { useLogin } from '@workspace/api-client-react';
+import { useAuth } from '@/contexts/AuthContext';
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
+import { Button } from '@/components/ui/button';
+import { Label } from '@/components/ui/label';
+import { ShieldAlert, Shield } from 'lucide-react';
+import { useToast } from '@/hooks/use-toast';
+
+export default function Login() {
+  const { login } = useAuth();
+  const loginMutation = useLogin();
+  const { toast } = useToast();
+  
+  const [username, setUsername] = useState('investigator');
+  const [password, setPassword] = useState('scrb2024');
+
+  const handleRoleSelect = (role: 'investigator' | 'supervisor' | 'admin') => {
+    setUsername(role);
+    setPassword('scrb2024');
+  };
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    loginMutation.mutate({ data: { username, password } }, {
+      onSuccess: (data) => {
+        login(data.token, data.user);
+      },
+      onError: (err) => {
+        toast({
+          title: "Login Failed",
+          description: (err as any)?.error || "Invalid credentials",
+          variant: "destructive"
+        });
+      }
+    });
+  };
+
+  return (
+    <div className="min-h-screen bg-background flex flex-col items-center justify-center p-4 relative overflow-hidden">
+      {/* Background decorations */}
+      <div className="absolute inset-0 z-0 bg-[radial-gradient(circle_at_50%_0%,hsl(var(--primary)/0.15),transparent_50%)]" />
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-primary/5 rounded-full blur-3xl -z-10" />
+
+      <div className="z-10 w-full max-w-md">
+        <div className="text-center mb-8">
+          <div className="w-20 h-20 bg-card border-2 border-primary rounded-full flex items-center justify-center mx-auto mb-6 shadow-[0_0_30px_hsl(var(--primary)/0.3)]">
+            <Shield className="w-10 h-10 text-secondary" />
+          </div>
+          <h1 className="text-3xl font-bold tracking-widest text-primary-foreground mb-2">SCRB SANKET</h1>
+          <h2 className="text-lg font-medium text-muted-foreground uppercase tracking-wider">AI Crime Intelligence Platform</h2>
+          <p className="text-sm text-muted-foreground mt-2">Karnataka State Crime Records Bureau</p>
+        </div>
+
+        <Card className="border-primary/30 shadow-xl shadow-black/50 bg-card/95 backdrop-blur-sm">
+          <CardHeader className="border-b border-border/50 pb-4">
+            <CardTitle className="text-xl text-center">Authorized Access Only</CardTitle>
+            <CardDescription className="text-center">Select a demo role or enter credentials</CardDescription>
+          </CardHeader>
+          <CardContent className="pt-6">
+            <div className="grid grid-cols-3 gap-2 mb-6">
+              <Button 
+                type="button" 
+                variant={username === 'demo_investigator' ? 'default' : 'outline'} 
+                className="text-xs"
+                onClick={() => handleRoleSelect('investigator')}
+              >
+                Investigator
+              </Button>
+              <Button 
+                type="button" 
+                variant={username === 'demo_supervisor' ? 'default' : 'outline'} 
+                className="text-xs"
+                onClick={() => handleRoleSelect('supervisor')}
+              >
+                Supervisor
+              </Button>
+              <Button 
+                type="button" 
+                variant={username === 'demo_admin' ? 'default' : 'outline'} 
+                className="text-xs"
+                onClick={() => handleRoleSelect('admin')}
+              >
+                Admin
+              </Button>
+            </div>
+
+            <form onSubmit={handleSubmit} className="space-y-4">
+              <div className="space-y-2">
+                <Label htmlFor="username">Badge Number / Username</Label>
+                <Input 
+                  id="username" 
+                  value={username}
+                  onChange={(e) => setUsername(e.target.value)}
+                  className="font-mono bg-background/50"
+                  required
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="password">Passcode</Label>
+                <Input 
+                  id="password" 
+                  type="password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  className="font-mono bg-background/50"
+                  required
+                />
+              </div>
+              <Button 
+                type="submit" 
+                className="w-full mt-6 bg-primary hover:bg-primary/90 text-primary-foreground font-semibold tracking-wide"
+                disabled={loginMutation.isPending}
+              >
+                {loginMutation.isPending ? 'AUTHENTICATING...' : 'SECURE LOGIN'}
+              </Button>
+            </form>
+          </CardContent>
+          <CardFooter className="flex flex-col gap-2 pt-4 border-t border-border/50 text-center">
+            <div className="flex items-center justify-center gap-2 text-xs text-muted-foreground">
+              <ShieldAlert className="w-3 h-3 text-secondary" />
+              <span>Restricted System. Monitored and logged.</span>
+            </div>
+          </CardFooter>
+        </Card>
+      </div>
+    </div>
+  );
+}

@@ -1,0 +1,107 @@
+import React, { useState } from 'react';
+import { useGetAuditLog } from '@workspace/api-client-react';
+import { Card, CardContent } from '@/components/ui/card';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { FileText, Search, Shield } from 'lucide-react';
+import { Input } from '@/components/ui/input';
+import { Skeleton } from '@/components/ui/skeleton';
+import { format } from 'date-fns';
+
+export default function AuditLogs() {
+  const [search, setSearch] = useState('');
+  const { data: logs, isLoading } = useGetAuditLog({ limit: 100 });
+
+  const filteredLogs = React.useMemo(() => {
+    if (!logs) return [];
+    if (!search) return logs;
+    const lower = search.toLowerCase();
+    return logs.filter(log => 
+      log.userName.toLowerCase().includes(lower) || 
+      log.query.toLowerCase().includes(lower) ||
+      log.userId.toLowerCase().includes(lower)
+    );
+  }, [logs, search]);
+
+  return (
+    <div className="flex flex-col h-full gap-4">
+      <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
+        <div>
+          <h2 className="text-2xl font-bold tracking-tight text-primary-foreground uppercase flex items-center gap-2">
+            <FileText className="w-6 h-6 text-secondary" />
+            System Audit Logs
+          </h2>
+          <p className="text-muted-foreground text-sm">Immutable record of system queries and data access.</p>
+        </div>
+        
+        <div className="relative w-full md:w-72">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+          <Input 
+            placeholder="Search logs..." 
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            className="pl-9 bg-card border-border/50"
+          />
+        </div>
+      </div>
+
+      <Card className="flex-1 border-border/50 bg-card/50 overflow-hidden flex flex-col">
+        <CardContent className="p-0 flex-1 overflow-auto">
+          <Table>
+            <TableHeader className="bg-muted/50 sticky top-0 z-10">
+              <TableRow className="border-border/50 hover:bg-transparent">
+                <TableHead className="w-[180px] uppercase text-[10px] tracking-wider font-semibold text-muted-foreground">Timestamp</TableHead>
+                <TableHead className="w-[200px] uppercase text-[10px] tracking-wider font-semibold text-muted-foreground">Officer / ID</TableHead>
+                <TableHead className="uppercase text-[10px] tracking-wider font-semibold text-muted-foreground">Query / Action</TableHead>
+                <TableHead className="w-[120px] text-right uppercase text-[10px] tracking-wider font-semibold text-muted-foreground">Results</TableHead>
+                <TableHead className="w-[140px] uppercase text-[10px] tracking-wider font-semibold text-muted-foreground">IP Address</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {isLoading ? (
+                Array(10).fill(0).map((_, i) => (
+                  <TableRow key={i} className="border-border/50">
+                    <TableCell><Skeleton className="h-4 w-32" /></TableCell>
+                    <TableCell><Skeleton className="h-4 w-40" /></TableCell>
+                    <TableCell><Skeleton className="h-4 w-full" /></TableCell>
+                    <TableCell><Skeleton className="h-4 w-12 ml-auto" /></TableCell>
+                    <TableCell><Skeleton className="h-4 w-24" /></TableCell>
+                  </TableRow>
+                ))
+              ) : filteredLogs.length === 0 ? (
+                <TableRow>
+                  <TableCell colSpan={5} className="h-48 text-center text-muted-foreground">
+                    <Shield className="w-8 h-8 mx-auto mb-2 opacity-50" />
+                    No audit records found matching criteria.
+                  </TableCell>
+                </TableRow>
+              ) : (
+                filteredLogs.map((log) => (
+                  <TableRow key={log.id} className="border-border/50 hover:bg-muted/30">
+                    <TableCell className="font-mono text-xs text-muted-foreground">
+                      {format(new Date(log.timestamp), 'yyyy-MM-dd HH:mm:ss')}
+                    </TableCell>
+                    <TableCell>
+                      <div className="flex flex-col">
+                        <span className="font-medium text-sm text-foreground">{log.userName}</span>
+                        <span className="font-mono text-[10px] text-muted-foreground">{log.userId} [{log.role}]</span>
+                      </div>
+                    </TableCell>
+                    <TableCell className="text-sm font-mono text-foreground/80 max-w-[400px] truncate" title={log.query}>
+                      {log.query}
+                    </TableCell>
+                    <TableCell className="text-right font-mono text-xs text-muted-foreground">
+                      {log.resultsCount}
+                    </TableCell>
+                    <TableCell className="font-mono text-xs text-muted-foreground">
+                      {log.ipAddress || '—'}
+                    </TableCell>
+                  </TableRow>
+                ))
+              )}
+            </TableBody>
+          </Table>
+        </CardContent>
+      </Card>
+    </div>
+  );
+}
