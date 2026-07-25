@@ -163,7 +163,7 @@ on Firebase's free **Spark** plan.
 
 **[Try the live demo →](https://scrb-sanket.web.app)** — log in with any of the three demo accounts listed in [`FIREBASE-DEPLOY.md`](./FIREBASE-DEPLOY.md#one-time-setup).
 
-📘 See **[`FIREBASE-DEPLOY.md`](./FIREBASE-DEPLOY.md)** for full setup —
+📘 See **[`credentials.md`](./FIREBASE-DEPLOY.md)** for full setup —
 creating a Firebase project, enabling Email/Password sign-in, creating the
 demo accounts, and deploying.
 
