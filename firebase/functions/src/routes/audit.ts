@@ -1,16 +1,12 @@
 import { Router, type IRouter } from "express";
 import { sessionStore } from "../lib/session-store.js";
-import { tokenStore } from "./auth.js";
+import { requireAuth } from "../lib/auth-middleware.js";
 
 const router: IRouter = Router();
 
-router.get("/audit/log", async (req, res): Promise<void> => {
-  // Role check
-  const authHeader = req.headers.authorization ?? "";
-  const token = authHeader.replace("Bearer ", "");
-  const user = tokenStore.get(token);
-
-  if (!user || (user.role !== "supervisor" && user.role !== "admin")) {
+router.get("/audit/log", requireAuth, async (req, res): Promise<void> => {
+  const u = req.authedUser!;
+  if (u.role !== "supervisor" && u.role !== "admin") {
     res.status(403).json({ error: "Access restricted to Supervisor and Admin roles" });
     return;
   }

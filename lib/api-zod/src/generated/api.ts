@@ -17,27 +17,7 @@ export const HealthCheckResponse = zod.object({
 
 
 /**
- * @summary Mock login
- */
-export const LoginBody = zod.object({
-  "username": zod.string(),
-  "password": zod.string()
-})
-
-export const LoginResponse = zod.object({
-  "token": zod.string(),
-  "user": zod.object({
-  "id": zod.string(),
-  "name": zod.string(),
-  "role": zod.enum(['investigator', 'supervisor', 'admin']),
-  "district": zod.string(),
-  "badgeNumber": zod.string().optional()
-})
-})
-
-
-/**
- * @summary Get current user
+ * @summary Get current user (verifies the Firebase ID token sent as a Bearer header)
  */
 export const GetMeResponse = zod.object({
   "id": zod.string(),

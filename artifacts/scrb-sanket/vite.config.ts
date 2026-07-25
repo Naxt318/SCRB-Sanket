@@ -1,81 +1,83 @@
 import path from 'path';
 import react from '@vitejs/plugin-react';
 import tailwindcss from '@tailwindcss/vite';
-import { defineConfig } from 'vite';
+import { defineConfig, loadEnv } from 'vite';
 
 import runtimeErrorOverlay from '@replit/vite-plugin-runtime-error-modal';
 
-const rawPort = process.env.PORT;
+export default defineConfig(async ({ mode }) => {
+  // Vite only auto-populates import.meta.env (browser code) from .env files.
+  // Values used here, in the config file itself (Node context), need to be
+  // loaded explicitly — this reads the same single .env file the app uses.
+  const env = loadEnv(mode, process.cwd(), '');
 
-// PORT is only needed to run the dev/preview server (locally or on Replit).
-// A production `vite build` (e.g. on Vercel) doesn't start a server at all,
-// so we default rather than fail the build when it's unset.
-const port = rawPort ? Number(rawPort) : 5173;
+  const rawPort = env.PORT;
+  const port = rawPort ? Number(rawPort) : 5173;
+  if (Number.isNaN(port) || port <= 0) {
+    throw new Error(`Invalid PORT value: "${rawPort}"`);
+  }
 
-if (Number.isNaN(port) || port <= 0) {
-  throw new Error(`Invalid PORT value: "${rawPort}"`);
-}
+  const basePath = env.BASE_PATH ?? '/';
 
-// Same reasoning for BASE_PATH — default to root ("/") when unset.
-const basePath = process.env.BASE_PATH ?? '/';
-
-export default defineConfig({
-  base: basePath,
-  plugins: [
-    react(),
-    tailwindcss(),
-    runtimeErrorOverlay(),
-    ...(process.env.NODE_ENV !== 'production' &&
-    process.env.REPL_ID !== undefined
-      ? [
-          await import('@replit/vite-plugin-cartographer').then((m) =>
-            m.cartographer({
-              root: path.resolve(import.meta.dirname, '..'),
-            }),
-          ),
-          await import('@replit/vite-plugin-dev-banner').then((m) =>
-            m.devBanner(),
-          ),
-        ]
-      : []),
-  ],
-  resolve: {
-    alias: {
-      '@': path.resolve(import.meta.dirname, 'src'),
-      '@assets': path.resolve(
-        import.meta.dirname,
-        '..',
-        '..',
-        'attached_assets',
-      ),
+  return {
+    base: basePath,
+    plugins: [
+      react(),
+      tailwindcss(),
+      runtimeErrorOverlay(),
+      ...(mode !== 'production' && env.REPL_ID !== undefined
+        ? [
+            await import('@replit/vite-plugin-cartographer').then((m) =>
+              m.cartographer({
+                root: path.resolve(import.meta.dirname, '..'),
+              }),
+            ),
+            await import('@replit/vite-plugin-dev-banner').then((m) =>
+              m.devBanner(),
+            ),
+          ]
+        : []),
+    ],
+    resolve: {
+      alias: {
+        '@': path.resolve(import.meta.dirname, 'src'),
+        '@assets': path.resolve(
+          import.meta.dirname,
+          '..',
+          '..',
+          'attached_assets',
+        ),
+      },
+      dedupe: ['react', 'react-dom'],
     },
-    dedupe: ['react', 'react-dom'],
-  },
-  root: path.resolve(import.meta.dirname),
-  build: {
-    outDir: path.resolve(import.meta.dirname, 'dist/public'),
-    emptyOutDir: true,
-  },
-  server: {
-    port,
-    strictPort: true,
-    host: '0.0.0.0',
-    allowedHosts: true,
-    fs: {
-      strict: true,
+    root: path.resolve(import.meta.dirname),
+    build: {
+      outDir: path.resolve(import.meta.dirname, 'dist/public'),
+      emptyOutDir: true,
     },
-    // In Replit, "/api" is routed to the API Server artifact automatically.
-    // Locally there's no such router, so proxy it to the api-server dev port.
-    proxy: {
-      '/api': {
-        target: `http://localhost:${process.env.API_PORT ?? '8080'}`,
-        changeOrigin: true,
+    server: {
+      port,
+      strictPort: true,
+      host: '0.0.0.0',
+      allowedHosts: true,
+      fs: {
+        strict: true,
+      },
+      // Firebase Hosting normally rewrites /api/** to the Cloud Function
+      // (see /firebase.json). Locally, run `firebase emulators:start` and
+      // this proxies to the Hosting emulator, which applies that same
+      // rewrite — so `pnpm dev` here still gets working /api/* calls.
+      proxy: {
+        '/api': {
+          target: env.VITE_DEV_API_PROXY_TARGET ?? 'http://localhost:5000',
+          changeOrigin: true,
+        },
       },
     },
-  },
-  preview: {
-    port,
-    host: '0.0.0.0',
-    allowedHosts: true,
-  },
+    preview: {
+      port,
+      host: '0.0.0.0',
+      allowedHosts: true,
+    },
+  };
 });

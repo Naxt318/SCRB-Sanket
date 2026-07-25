@@ -7,7 +7,6 @@
  */
 
 export * from './auditEntry';
-export * from './authResponse';
 export * from './chartData';
 export * from './chartDataset';
 export * from './chartDataType';
@@ -33,7 +32,6 @@ export * from './getNetworkParams';
 export * from './getTrendsParams';
 export * from './healthStatus';
 export * from './hotspot';
-export * from './loginInput';
 export * from './networkEdge';
 export * from './networkEdgeRelationship';
 export * from './networkGraph';

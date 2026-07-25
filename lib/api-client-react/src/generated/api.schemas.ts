@@ -17,11 +17,6 @@ export interface SuccessResponse {
   success: boolean;
 }
 
-export interface LoginInput {
-  username: string;
-  password: string;
-}
-
 export type UserRole = typeof UserRole[keyof typeof UserRole];
 
 
@@ -37,11 +32,6 @@ export interface User {
   role: UserRole;
   district: string;
   badgeNumber?: string;
-}
-
-export interface AuthResponse {
-  token: string;
-  user: User;
 }
 
 export type ChatMessageInputLanguage = typeof ChatMessageInputLanguage[keyof typeof ChatMessageInputLanguage];

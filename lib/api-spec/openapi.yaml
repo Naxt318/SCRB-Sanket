@@ -34,36 +34,11 @@ paths:
               schema:
                 $ref: "#/components/schemas/HealthStatus"
 
-  /auth/login:
-    post:
-      operationId: login
-      tags: [auth]
-      summary: Mock login
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: "#/components/schemas/LoginInput"
-      responses:
-        "200":
-          description: Logged in
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/AuthResponse"
-        "401":
-          description: Invalid credentials
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/ErrorResponse"
-
   /auth/me:
     get:
       operationId: getMe
       tags: [auth]
-      summary: Get current user
+      summary: Get current user (verifies the Firebase ID token sent as a Bearer header)
       responses:
         "200":
           description: Current user
@@ -71,6 +46,12 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/User"
+        "401":
+          description: Invalid or missing session
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
 
   /chat:
     post:
@@ -366,24 +347,6 @@ components:
       properties:
         success:
           type: boolean
-
-    LoginInput:
-      type: object
-      required: [username, password]
-      properties:
-        username:
-          type: string
-        password:
-          type: string
-
-    AuthResponse:
-      type: object
-      required: [token, user]
-      properties:
-        token:
-          type: string
-        user:
-          $ref: "#/components/schemas/User"
 
     User:
       type: object

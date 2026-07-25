@@ -21,7 +21,6 @@ import type {
 
 import type {
   AuditEntry,
-  AuthResponse,
   ChatMessage,
   ChatMessageInput,
   ChatResponse,
@@ -39,7 +38,6 @@ import type {
   GetTrendsParams,
   HealthStatus,
   Hotspot,
-  LoginInput,
   NetworkGraph,
   SuccessResponse,
   TrendResponse,
@@ -150,77 +148,6 @@ export function useHealthCheck<TData = Awaited<ReturnType<typeof healthCheck>>, 
 
 
 
-export const getLoginUrl = () => {
-
-
-
-
-  return `/api/auth/login`
-}
-
-/**
- * @summary Mock login
- */
-export const login = async (loginInput: LoginInput, options?: RequestInit): Promise<AuthResponse> => {
-
-  return customFetch<AuthResponse>(getLoginUrl(),
-  {
-    ...options,
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json', ...options?.headers },
-    body: JSON.stringify(loginInput)
-  }
-);}
-
-
-
-
-
-export const getLoginMutationOptions = <TError = ErrorType<ErrorResponse>,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof login>>, TError,{data: BodyType<LoginInput>}, TContext>, request?: SecondParameter<typeof customFetch>}
-): UseMutationOptions<Awaited<ReturnType<typeof login>>, TError,{data: BodyType<LoginInput>}, TContext> => {
-
-const mutationKey = ['login'];
-const {mutation: mutationOptions, request: requestOptions} = options ?
-      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
-      options
-      : {...options, mutation: {...options.mutation, mutationKey}}
-      : {mutation: { mutationKey, }, request: undefined};
-
-
-
-
-      const mutationFn: MutationFunction<Awaited<ReturnType<typeof login>>, {data: BodyType<LoginInput>}> = (props) => {
-          const {data} = props ?? {};
-
-          return  login(data,requestOptions)
-        }
-
-
-
-
-
-
-  return  { mutationFn, ...mutationOptions }}
-
-    export type LoginMutationResult = NonNullable<Awaited<ReturnType<typeof login>>>
-    export type LoginMutationBody = BodyType<LoginInput>
-    export type LoginMutationError = ErrorType<ErrorResponse>
-
-    /**
- * @summary Mock login
- */
-export const useLogin = <TError = ErrorType<ErrorResponse>,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof login>>, TError,{data: BodyType<LoginInput>}, TContext>, request?: SecondParameter<typeof customFetch>}
- ): UseMutationResult<
-        Awaited<ReturnType<typeof login>>,
-        TError,
-        {data: BodyType<LoginInput>},
-        TContext
-      > => {
-      return useMutation(getLoginMutationOptions(options));
-    }
-
 export const getGetMeUrl = () => {
 
 
@@ -230,7 +157,7 @@ export const getGetMeUrl = () => {
 }
 
 /**
- * @summary Get current user
+ * @summary Get current user (verifies the Firebase ID token sent as a Bearer header)
  */
 export const getMe = async ( options?: RequestInit): Promise<User> => {
 
@@ -254,7 +181,7 @@ export const getGetMeQueryKey = () => {
     }
 
 
-export const getGetMeQueryOptions = <TData = Awaited<ReturnType<typeof getMe>>, TError = ErrorType<unknown>>( options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof getMe>>, TError, TData>, request?: SecondParameter<typeof customFetch>}
+export const getGetMeQueryOptions = <TData = Awaited<ReturnType<typeof getMe>>, TError = ErrorType<ErrorResponse>>( options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof getMe>>, TError, TData>, request?: SecondParameter<typeof customFetch>}
 ) => {
 
 const {query: queryOptions, request: requestOptions} = options ?? {};
@@ -273,14 +200,14 @@ const {query: queryOptions, request: requestOptions} = options ?? {};
 }
 
 export type GetMeQueryResult = NonNullable<Awaited<ReturnType<typeof getMe>>>
-export type GetMeQueryError = ErrorType<unknown>
+export type GetMeQueryError = ErrorType<ErrorResponse>
 
 
 /**
- * @summary Get current user
+ * @summary Get current user (verifies the Firebase ID token sent as a Bearer header)
  */
 
-export function useGetMe<TData = Awaited<ReturnType<typeof getMe>>, TError = ErrorType<unknown>>(
+export function useGetMe<TData = Awaited<ReturnType<typeof getMe>>, TError = ErrorType<ErrorResponse>>(
   options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof getMe>>, TError, TData>, request?: SecondParameter<typeof customFetch>}
 
  ):  UseQueryResult<TData, TError> & { queryKey: QueryKey } {

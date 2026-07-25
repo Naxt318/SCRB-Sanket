@@ -2,12 +2,12 @@ import { Router, type IRouter } from "express";
 import { randomUUID } from "crypto";
 import { processQuery } from "../lib/chat-engine.js";
 import { sessionStore } from "../lib/session-store.js";
-import { tokenStore } from "./auth.js";
+import { optionalAuth } from "../lib/auth-middleware.js";
 import { getFirs, DISTRICTS } from "../data/synthetic-firs.js";
 
 const router: IRouter = Router();
 
-router.post("/chat", async (req, res): Promise<void> => {
+router.post("/chat", optionalAuth, async (req, res): Promise<void> => {
   const { message, language = "english", sessionId } = req.body ?? {};
 
   if (!message || typeof message !== "string") {
@@ -113,12 +113,10 @@ router.post("/chat", async (req, res): Promise<void> => {
   sessionStore.addMessage(assistantMsg);
 
   // Audit log entry
-  const authHeader = req.headers.authorization ?? "";
-  const token = authHeader.replace("Bearer ", "");
-  const user = tokenStore.get(token);
+  const user = req.authedUser;
   sessionStore.addAuditEntry({
     id: randomUUID(),
-    userId: user?.id ?? "anonymous",
+    userId: user?.uid ?? "anonymous",
     userName: user?.name ?? "Anonymous",
     role: user?.role ?? "unknown",
     query: message,

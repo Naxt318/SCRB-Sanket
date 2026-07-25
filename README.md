@@ -120,21 +120,25 @@ flowchart LR
         UI["React + Vite frontend<br/>chat · map · network · trends"]
     end
 
-    subgraph Server["API Server (Express)"]
-        Chat["Chat engine<br/>(rule-based NL parsing)"]
-        Auth["Auth & session store"]
-        Routes["FIR / audit / network routes"]
+    subgraph Firebase
+        Auth["Firebase Authentication<br/>(Email/Password)"]
+        subgraph Fn["Cloud Function: api"]
+            Verify["ID-token verification<br/>(firebase-admin)"]
+            Chat["Chat engine<br/>(rule-based NL parsing)"]
+            Routes["FIR / audit / network routes"]
+        end
+        Hosting["Firebase Hosting<br/>rewrites /api/** → api"]
     end
 
     Data[("Synthetic FIR dataset<br/>in-memory")]
-    DB[("PostgreSQL<br/>via Drizzle ORM")]
 
-    UI -->|"/api/*"| Routes
-    UI --> Auth
-    UI --> Chat
+    UI -->|"sign in"| Auth
+    UI -->|"/api/* + ID token"| Hosting
+    Hosting --> Fn
+    Verify --> Chat
+    Verify --> Routes
     Chat --> Data
     Routes --> Data
-    Auth --> DB
 ```
 
 <br>
@@ -144,7 +148,8 @@ flowchart LR
 | Layer | Tools |
 |---|---|
 | **Frontend** | React · Vite · Tailwind CSS · Recharts · Leaflet · `react-force-graph` · `wouter` |
-| **Backend** | Express · Drizzle ORM · PostgreSQL |
+| **Backend** | Firebase Cloud Functions (Express) · Firebase Admin SDK |
+| **Auth** | Firebase Authentication (Email/Password) |
 | **Monorepo** | pnpm workspaces · TypeScript throughout |
 
 <br>
@@ -152,6 +157,8 @@ flowchart LR
 ## 🚀 Getting started
 
 ```bash
+cp artifacts/scrb-sanket/.env.example artifacts/scrb-sanket/.env
+# fill in your Firebase project's web config, see FIREBASE-DEPLOY.md
 pnpm install
 pnpm dev
 ```
@@ -159,10 +166,11 @@ pnpm dev
 | Service | URL |
 |---|---|
 | 🖥️ Frontend | `http://localhost:26259` |
-| ⚙️ API | `http://localhost:8080` |
+| ⚙️ API (via emulators) | `http://localhost:5000/api/*` |
 
-📘 See **[`RUN-LOCALLY.md`](./RUN-LOCALLY.md)** for full setup details,
-environment variables, and platform-specific notes.
+📘 See **[`FIREBASE-DEPLOY.md`](./FIREBASE-DEPLOY.md)** for full setup —
+creating a Firebase project, enabling Email/Password sign-in, creating the
+demo accounts, and deploying.
 
 <br>
 
@@ -171,10 +179,10 @@ environment variables, and platform-specific notes.
 ```
 artifacts/
   scrb-sanket/       # React + Vite frontend
-  api-server/        # Express API (chat engine, synthetic dataset, auth)
   mockup-sandbox/    # Component design sandbox
+firebase/
+  functions/         # Cloud Function: chat engine, synthetic dataset, auth verification
 lib/
-  db/                # Drizzle schema + Postgres connection
   api-spec/          # API contract
   api-zod/           # Generated Zod validators
   api-client-react/  # Generated typed API client

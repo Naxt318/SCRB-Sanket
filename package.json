@@ -7,9 +7,8 @@
     "build": "pnpm run typecheck && pnpm -r --if-present run build",
     "typecheck:libs": "tsc --build",
     "typecheck": "pnpm run typecheck:libs && pnpm -r --filter \"./artifacts/**\" --filter \"./scripts\" --if-present run typecheck",
-    "dev:api": "dotenv -e artifacts/api-server/.env -- pnpm --filter @workspace/api-server run dev",
-    "dev:web": "dotenv -e artifacts/scrb-sanket/.env.local -- pnpm --filter @workspace/scrb-sanket run dev",
-    "dev": "concurrently -n api,web -c blue,green \"pnpm run dev:api\" \"pnpm run dev:web\""
+    "dev": "pnpm --filter @workspace/scrb-sanket run dev",
+    "dev:functions": "firebase emulators:start --only functions,hosting"
   },
   "private": true,
   "dependencies": {
@@ -17,8 +16,6 @@
   },
   "devDependencies": {
     "@types/node": "catalog:",
-    "concurrently": "^10.0.3",
-    "dotenv-cli": "^11.0.0",
     "prettier": "^3.9.5",
     "typescript": "~5.9.3"
   }

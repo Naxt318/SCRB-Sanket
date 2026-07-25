@@ -137,5 +137,7 @@ overrides:
   esbuild: "0.27.3"
 
 allowBuilds:
+  '@firebase/util': true
   core-js: true
   esbuild: true
+  protobufjs: true

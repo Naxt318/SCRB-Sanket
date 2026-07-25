@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { useLogin } from '@workspace/api-client-react';
 import { useAuth } from '@/contexts/AuthContext';
+import { DEMO_ACCOUNTS, DEMO_PASSWORD, type DemoAccount } from '@/lib/demo-users';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
@@ -8,33 +8,50 @@ import { Label } from '@/components/ui/label';
 import { ShieldAlert, Shield } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 
+function friendlyAuthError(err: unknown): string {
+  const code = (err as { code?: string })?.code ?? '';
+  switch (code) {
+    case 'auth/invalid-credential':
+    case 'auth/wrong-password':
+    case 'auth/user-not-found':
+      return 'Invalid email or password.';
+    case 'auth/too-many-requests':
+      return 'Too many attempts. Try again in a moment.';
+    case 'auth/invalid-api-key':
+    case 'auth/api-key-not-valid':
+      return 'Firebase isn\u2019t configured \u2014 check the .env file.';
+    default:
+      return 'Login failed. Please try again.';
+  }
+}
+
 export default function Login() {
   const { login } = useAuth();
-  const loginMutation = useLogin();
   const { toast } = useToast();
-  
-  const [username, setUsername] = useState('investigator');
-  const [password, setPassword] = useState('scrb2024');
 
-  const handleRoleSelect = (role: 'investigator' | 'supervisor' | 'admin') => {
-    setUsername(role);
-    setPassword('scrb2024');
+  const [email, setEmail] = useState(DEMO_ACCOUNTS[0].email);
+  const [password, setPassword] = useState(DEMO_PASSWORD);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const handleRoleSelect = (account: DemoAccount) => {
+    setEmail(account.email);
+    setPassword(DEMO_PASSWORD);
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    loginMutation.mutate({ data: { username, password } }, {
-      onSuccess: (data) => {
-        login(data.token, data.user);
-      },
-      onError: (err) => {
-        toast({
-          title: "Login Failed",
-          description: (err as any)?.error || "Invalid credentials",
-          variant: "destructive"
-        });
-      }
-    });
+    setIsSubmitting(true);
+    try {
+      await login(email, password);
+    } catch (err) {
+      toast({
+        title: 'Login Failed',
+        description: friendlyAuthError(err),
+        variant: 'destructive',
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -60,47 +77,35 @@ export default function Login() {
           </CardHeader>
           <CardContent className="pt-6">
             <div className="grid grid-cols-3 gap-2 mb-6">
-              <Button 
-                type="button" 
-                variant={username === 'demo_investigator' ? 'default' : 'outline'} 
-                className="text-xs"
-                onClick={() => handleRoleSelect('investigator')}
-              >
-                Investigator
-              </Button>
-              <Button 
-                type="button" 
-                variant={username === 'demo_supervisor' ? 'default' : 'outline'} 
-                className="text-xs"
-                onClick={() => handleRoleSelect('supervisor')}
-              >
-                Supervisor
-              </Button>
-              <Button 
-                type="button" 
-                variant={username === 'demo_admin' ? 'default' : 'outline'} 
-                className="text-xs"
-                onClick={() => handleRoleSelect('admin')}
-              >
-                Admin
-              </Button>
+              {DEMO_ACCOUNTS.map((account) => (
+                <Button
+                  key={account.email}
+                  type="button"
+                  variant={email === account.email ? 'default' : 'outline'}
+                  className="text-xs"
+                  onClick={() => handleRoleSelect(account)}
+                >
+                  {account.label}
+                </Button>
+              ))}
             </div>
 
             <form onSubmit={handleSubmit} className="space-y-4">
               <div className="space-y-2">
-                <Label htmlFor="username">Badge Number / Username</Label>
-                <Input 
-                  id="username" 
-                  value={username}
-                  onChange={(e) => setUsername(e.target.value)}
+                <Label htmlFor="email">Email</Label>
+                <Input
+                  id="email"
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
                   className="font-mono bg-background/50"
                   required
                 />
               </div>
               <div className="space-y-2">
                 <Label htmlFor="password">Passcode</Label>
-                <Input 
-                  id="password" 
+                <Input
+                  id="password"
                   type="password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
@@ -108,12 +113,12 @@ export default function Login() {
                   required
                 />
               </div>
-              <Button 
-                type="submit" 
+              <Button
+                type="submit"
                 className="w-full mt-6 bg-primary hover:bg-primary/90 text-primary-foreground font-semibold tracking-wide"
-                disabled={loginMutation.isPending}
+                disabled={isSubmitting}
               >
-                {loginMutation.isPending ? 'AUTHENTICATING...' : 'SECURE LOGIN'}
+                {isSubmitting ? 'AUTHENTICATING...' : 'SECURE LOGIN'}
               </Button>
             </form>
           </CardContent>
