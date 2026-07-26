@@ -287,7 +287,7 @@ ${Math.abs(pctChange) > 20 ? "⚠️ **Early Warning:** This trend exceeds the 2
 // the app always stays functional either way.
 
 const GEMINI_API_KEY = import.meta.env.VITE_GEMINI_API_KEY as string | undefined;
-const GEMINI_MODEL = "gemini-2.0-flash";
+const GEMINI_MODEL = "gemini-2.5-flash";
 
 function summarizeForAI(filtered: SyntheticFir[], intent: QueryIntent, timeLabel: string): string {
   const byDistrict: Record<string, number> = {};
@@ -349,6 +349,9 @@ Investigator's question: "${message}"
 Give a direct, helpful answer grounded in the data summary above.`;
 
   try {
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 10000); // hard 10s cap
+
     const res = await fetch(
       `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent?key=${GEMINI_API_KEY}`,
       {
@@ -357,13 +360,20 @@ Give a direct, helpful answer grounded in the data summary above.`;
         body: JSON.stringify({
           contents: [{ parts: [{ text: prompt }] }],
         }),
+        signal: controller.signal,
       }
     );
-    if (!res.ok) return null;
+    clearTimeout(timeoutId);
+    if (!res.ok) {
+      const errBody = await res.text().catch(() => "");
+      console.warn(`[SANKET] Gemini API call failed (${res.status} ${res.statusText}) — falling back to rule-based engine.`, errBody);
+      return null;
+    }
     const data = await res.json();
     const text = data?.candidates?.[0]?.content?.parts?.[0]?.text;
     return typeof text === "string" && text.trim() ? text.trim() : null;
-  } catch {
+  } catch (err) {
+    console.warn("[SANKET] Gemini API call threw — falling back to rule-based engine.", err);
     return null;
   }
 }
@@ -476,22 +486,26 @@ export async function processQueryWithAI(
 ): Promise<ChatEngineResult & { aiPowered: boolean }> {
   const ruleBasedResult = processQuery(message, sessionHistory);
 
-  const aiAnswer = await generateAiAnswer(
-    message,
-    ruleBasedResult.firs,
-    ruleBasedResult.intent,
-    ruleBasedResult.intent.timeRange ?? "the selected period",
-    sessionHistory
-  );
+  try {
+    const aiAnswer = await generateAiAnswer(
+      message,
+      ruleBasedResult.firs,
+      ruleBasedResult.intent,
+      ruleBasedResult.intent.timeRange ?? "the selected period",
+      sessionHistory
+    );
 
-  if (aiAnswer) {
-    return {
-      ...ruleBasedResult,
-      answer: aiAnswer,
-      reasoning: [...ruleBasedResult.reasoning, "Generated natural-language answer via Gemini AI, grounded in the filtered dataset above."],
-      sources: [...ruleBasedResult.sources, "AI model: Google Gemini (gemini-2.0-flash)"],
-      aiPowered: true,
-    };
+    if (aiAnswer) {
+      return {
+        ...ruleBasedResult,
+        answer: aiAnswer,
+        reasoning: [...ruleBasedResult.reasoning, "Generated natural-language answer via Gemini AI, grounded in the filtered dataset above."],
+        sources: [...ruleBasedResult.sources, "AI model: Google Gemini (gemini-2.5-flash)"],
+        aiPowered: true,
+      };
+    }
+  } catch {
+    // Fall through to the deterministic answer below — chat must never hang or crash.
   }
 
   return { ...ruleBasedResult, aiPowered: false };

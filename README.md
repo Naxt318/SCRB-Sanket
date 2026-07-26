@@ -2,7 +2,7 @@
 
 <img src="./attached_assets/karnataka-emblem.png" width="80" alt="Karnataka State Emblem">
 
-#  SCRB Sanket
+# 🛡️ SCRB Sanket
 
 ### AI-powered conversational crime intelligence for the Karnataka State Crime Records Bureau
 
