@@ -16,13 +16,14 @@
   <img alt="react" src="https://img.shields.io/badge/React-18-61DAFB?style=flat-square&logo=react&logoColor=black">
   <img alt="vite" src="https://img.shields.io/badge/Vite-7-646CFF?style=flat-square&logo=vite&logoColor=white">
   <img alt="typescript" src="https://img.shields.io/badge/TypeScript-5.9-3178C6?style=flat-square&logo=typescript&logoColor=white">
-  <img alt="firebase" src="https://img.shields.io/badge/Firebase-Auth_%2B_Hosting-FFCA28?style=flat-square&logo=firebase&logoColor=black">
+  <img alt="firebase" src="https://img.shields.io/badge/Firebase-Auth-FFCA28?style=flat-square&logo=firebase&logoColor=black">
+  <img alt="catalyst" src="https://img.shields.io/badge/Zoho_Catalyst-Hosting-D2131A?style=flat-square&logo=zoho&logoColor=white">
   <img alt="tailwind" src="https://img.shields.io/badge/Tailwind_CSS-4-06B6D4?style=flat-square&logo=tailwindcss&logoColor=white">
   <img alt="pnpm" src="https://img.shields.io/badge/pnpm-workspaces-F69220?style=flat-square&logo=pnpm&logoColor=white">
 </p>
 
 > ⚠️ **Demo environment — synthetic data only, no real case records.**
-> Nothing in this repo touches real CCTNS/SCRB data, real names, or real ongoing investigations.
+> Nothing in this repo touches real CCTNS/SCRB data, real names, logos, signs or real ongoing investigations.
 
 ### 🔗 [**Live Demo →**](https://scrb-sanket.web.app) &nbsp;·&nbsp; [**GitHub Repo →**](https://github.com/Naxt318/SCRB-Sanket)
 
@@ -88,7 +89,7 @@ stands in for real records so the prototype can be demoed safely.
 </tr>
 <tr>
 <td align="center">🎙️</td>
-<td><b>Voice input</b><br>Mic-driven queries for hands-free use.</td>
+<td><b>Voice input</b><br>Mic-driven queries for hands-free use, transcribed via Sarvam AI speech-to-text.</td>
 </tr>
 <tr>
 <td align="center">📄</td>
@@ -109,10 +110,11 @@ connection to real cases, investigations, or people.
 <tr><td>🧾 <b>Record fields</b></td><td>Timestamps, approximate geo-coordinates, anonymized person-of-interest linkage IDs</td></tr>
 </table>
 
-> The chat engine is **rule-based and deterministic** — it parses the
-> query, matches it against this dataset, and returns an answer with its
-> reasoning shown. No external AI API calls are made to answer questions,
-> which keeps the demo self-contained and auditable by design.
+> The chat engine grounds every answer in this synthetic dataset first —
+> filtering and reasoning over it deterministically — then uses Google
+> Gemini (free tier) to phrase the final natural-language response,
+> falling back to a rule-based answer automatically if the AI call is
+> unavailable.
 
 <br>
 
@@ -124,15 +126,20 @@ flowchart LR
         UI["React + Vite frontend<br/>chat · map · network · trends"]
         subgraph Local["src/local-api (in-browser)"]
             Router["Local API router<br/>(intercepts /api/* calls)"]
-            Chat["Chat engine<br/>(rule-based NL parsing)"]
+            Chat["Chat engine<br/>(rule-based filtering + Gemini AI)"]
             Routes["FIR / audit / network handlers"]
         end
         Data[("Synthetic FIR dataset<br/>in-memory")]
     end
 
-    subgraph Firebase
+    subgraph External
         Auth["Firebase Authentication<br/>(Email/Password)"]
-        Hosting["Firebase Hosting<br/>static files only"]
+        AI["Google Gemini API<br/>(free tier)"]
+        Voice["Sarvam AI<br/>(speech-to-text)"]
+    end
+
+    subgraph ZohoCatalyst["Zoho Catalyst"]
+        Hosting["Web Client Hosting<br/>static files only"]
     end
 
     UI -->|"sign in"| Auth
@@ -140,13 +147,17 @@ flowchart LR
     Router --> Chat
     Router --> Routes
     Chat --> Data
+    Chat -->|"generate answer"| AI
+    UI -->|"transcribe"| Voice
     Routes --> Data
     Hosting -.->|"serves"| UI
 ```
 
 There's no backend server or Cloud Function — every "/api/*" call is
-answered inside the browser by `src/local-api/`, which is why this runs
-on Firebase's free **Spark** plan.
+answered inside the browser by `src/local-api/`. The only external calls
+are to Firebase (auth), Google Gemini (chat answers), and Sarvam AI
+(voice transcription) — all reachable directly from the browser, which is
+why this can run entirely on free tiers.
 
 <br>
 
@@ -157,6 +168,8 @@ on Firebase's free **Spark** plan.
 | **Frontend** | React · Vite · Tailwind CSS · Recharts · Leaflet · `react-force-graph` · `wouter` |
 | **"Backend"** | Plain TypeScript running in the browser (`src/local-api/`) — no server |
 | **Auth** | Firebase Authentication (Email/Password) |
+| **AI** | Google Gemini API (chat answers) · Sarvam AI (voice transcription) |
+| **Hosting** | Zoho Catalyst — Web Client Hosting |
 | **Monorepo** | pnpm workspaces · TypeScript throughout |
 
 <br>
@@ -170,18 +183,27 @@ on Firebase's free **Spark** plan.
 
 ## ☁️ Deployment
 
-Since the app is fully static (no server, no database), it can be hosted
-on either of these — pick whichever is easier for you:
+The app is fully static (no server, no database) and is hosted on
+**Zoho Catalyst's Web Client Hosting**.
 
-| Host | Command | Notes |
-|---|---|---|
-| **Firebase Hosting** | `firebase deploy --only hosting` | Also hosts Firebase Authentication for login. See `FIREBASE-DEPLOY.md`. |
-| **Vercel** | `git push` (auto-deploys) | Uses the `vercel.json` at the repo root. Add the six `VITE_FIREBASE_*` variables under Project Settings → Environment Variables so login still works. |
+```bash
+npm install -g zcatalyst-cli
+catalyst login
+catalyst init            # link this folder to your Catalyst project (Client only)
+pnpm --filter @workspace/scrb-sanket run build
+catalyst deploy --only client        # deploys to the Development environment
+catalyst deploy --only client --prod # promotes to Production
+```
 
-Both point at the same build output
-(`artifacts/scrb-sanket/dist/public`) and the same Firebase project for
-auth — you can even run both at once and share whichever link is more
-convenient.
+Catalyst deploys to a Development environment first; use the `--prod`
+flag (or the "Migrate to Production" option in the console) to make a
+build publicly reachable.
+
+Firebase Authentication is still used for login regardless of where the
+static files are hosted — set the six `VITE_FIREBASE_*` variables in your
+`.env` (see `FIREBASE-DEPLOY.md` for creating the Firebase project and
+demo accounts), plus `VITE_GEMINI_API_KEY` and `VITE_SARVAM_API_KEY` for
+the AI chat and voice features.
 
 <br>
 
