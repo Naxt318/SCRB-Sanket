@@ -22,7 +22,7 @@
 </p>
 
 > ⚠️ **Demo environment — synthetic data only, no real case records.**
-> Nothing in this repo touches real CCTNS/SCRB data, real names, or real ongoing investigations.
+> Nothing in this repo touches real CCTNS/SCRB data, real names, logos, signs or real ongoing investigations.
 
 ### 🔗 [**Live Demo →**](https://scrb-sanket.web.app) &nbsp;·&nbsp; [**GitHub Repo →**](https://github.com/Naxt318/SCRB-Sanket)
 
