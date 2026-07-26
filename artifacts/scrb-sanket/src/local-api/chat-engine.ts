@@ -287,7 +287,11 @@ ${Math.abs(pctChange) > 20 ? "⚠️ **Early Warning:** This trend exceeds the 2
 // the app always stays functional either way.
 
 const GEMINI_API_KEY = import.meta.env.VITE_GEMINI_API_KEY as string | undefined;
-const GEMINI_MODEL = "gemini-2.5-flash";
+// Google keeps rotating which models are available to a given API key (especially
+// newer keys, which get cut off from older free-tier models ahead of the published
+// deprecation dates). Try a short list in order instead of hardcoding a single model,
+// so one Google-side change doesn't take the whole assistant down again.
+const GEMINI_MODELS = ["gemini-3.1-flash-lite", "gemini-3-flash", "gemini-2.5-flash", "gemini-2.5-flash-lite"];
 
 function summarizeForAI(filtered: SyntheticFir[], intent: QueryIntent, timeLabel: string): string {
   const byDistrict: Record<string, number> = {};
@@ -321,7 +325,7 @@ async function generateAiAnswer(
   intent: QueryIntent,
   timeLabel: string,
   sessionHistory: Array<{ role: "user" | "assistant"; content: string }>
-): Promise<string | null> {
+): Promise<{ text: string; model: string } | null> {
   if (!GEMINI_API_KEY) return null;
 
   const dataSummary = summarizeForAI(filtered, intent, timeLabel);
@@ -348,34 +352,44 @@ Investigator's question: "${message}"
 
 Give a direct, helpful answer grounded in the data summary above.`;
 
-  try {
-    const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 10000); // hard 10s cap
+  for (const model of GEMINI_MODELS) {
+    try {
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 10000); // hard 10s cap
 
-    const res = await fetch(
-      `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent?key=${GEMINI_API_KEY}`,
-      {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          contents: [{ parts: [{ text: prompt }] }],
-        }),
-        signal: controller.signal,
+      const res = await fetch(
+        `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${GEMINI_API_KEY}`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            contents: [{ parts: [{ text: prompt }] }],
+          }),
+          signal: controller.signal,
+        }
+      );
+      clearTimeout(timeoutId);
+
+      if (!res.ok) {
+        const errBody = await res.text().catch(() => "");
+        console.warn(`[SANKET] Gemini model "${model}" failed (${res.status} ${res.statusText}).`, errBody);
+        // 404 = this model isn't available to this key/region — try the next one.
+        // Anything else (429 quota, 5xx, etc.) won't be fixed by switching models — bail out.
+        if (res.status === 404) continue;
+        return null;
       }
-    );
-    clearTimeout(timeoutId);
-    if (!res.ok) {
-      const errBody = await res.text().catch(() => "");
-      console.warn(`[SANKET] Gemini API call failed (${res.status} ${res.statusText}) — falling back to rule-based engine.`, errBody);
+
+      const data = await res.json();
+      const text = data?.candidates?.[0]?.content?.parts?.[0]?.text;
+      return typeof text === "string" && text.trim() ? { text: text.trim(), model } : null;
+    } catch (err) {
+      console.warn(`[SANKET] Gemini model "${model}" call threw.`, err);
       return null;
     }
-    const data = await res.json();
-    const text = data?.candidates?.[0]?.content?.parts?.[0]?.text;
-    return typeof text === "string" && text.trim() ? text.trim() : null;
-  } catch (err) {
-    console.warn("[SANKET] Gemini API call threw — falling back to rule-based engine.", err);
-    return null;
   }
+
+  console.warn("[SANKET] All Gemini model candidates failed — falling back to rule-based engine.");
+  return null;
 }
 
 // ──────────────────────────────────────────────
@@ -498,9 +512,9 @@ export async function processQueryWithAI(
     if (aiAnswer) {
       return {
         ...ruleBasedResult,
-        answer: aiAnswer,
+        answer: aiAnswer.text,
         reasoning: [...ruleBasedResult.reasoning, "Generated natural-language answer via Gemini AI, grounded in the filtered dataset above."],
-        sources: [...ruleBasedResult.sources, "AI model: Google Gemini (gemini-2.5-flash)"],
+        sources: [...ruleBasedResult.sources, `AI model: Google Gemini (${aiAnswer.model})`],
         aiPowered: true,
       };
     }
