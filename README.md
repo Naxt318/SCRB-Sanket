@@ -13,11 +13,13 @@
 </p>
 
 <p>
-  <img alt="react" src="https://img.shields.io/badge/React-18-61DAFB?style=flat-square&logo=react&logoColor=black">
+  <img alt="react" src="https://img.shields.io/badge/React-19-61DAFB?style=flat-square&logo=react&logoColor=black">
   <img alt="vite" src="https://img.shields.io/badge/Vite-7-646CFF?style=flat-square&logo=vite&logoColor=white">
   <img alt="typescript" src="https://img.shields.io/badge/TypeScript-5.9-3178C6?style=flat-square&logo=typescript&logoColor=white">
+  <img alt="express" src="https://img.shields.io/badge/Express-5-000000?style=flat-square&logo=express&logoColor=white">
+  <img alt="postgres" src="https://img.shields.io/badge/Postgres-Drizzle_ORM-4169E1?style=flat-square&logo=postgresql&logoColor=white">
   <img alt="firebase" src="https://img.shields.io/badge/Firebase-Auth-FFCA28?style=flat-square&logo=firebase&logoColor=black">
-  <img alt="catalyst" src="https://img.shields.io/badge/Zoho_Catalyst-Hosting-D2131A?style=flat-square&logo=zoho&logoColor=white">
+  <img alt="vercel" src="https://img.shields.io/badge/Vercel-Frontend-000000?style=flat-square&logo=vercel&logoColor=white">
   <img alt="tailwind" src="https://img.shields.io/badge/Tailwind_CSS-4-06B6D4?style=flat-square&logo=tailwindcss&logoColor=white">
   <img alt="pnpm" src="https://img.shields.io/badge/pnpm-workspaces-F69220?style=flat-square&logo=pnpm&logoColor=white">
 </p>
@@ -111,53 +113,74 @@ connection to real cases, investigations, or people.
 </table>
 
 > The chat engine grounds every answer in this synthetic dataset first —
-> filtering and reasoning over it deterministically — then uses Google
-> Gemini (free tier) to phrase the final natural-language response,
-> falling back to a rule-based answer automatically if the AI call is
-> unavailable.
+> filtering and reasoning over it deterministically. In the browser
+> (zero-backend) build, it then uses Google Gemini (free tier) to phrase
+> the final natural-language response, falling back to a rule-based
+> answer automatically if the AI call is unavailable. The Express
+> `api-server` build currently answers with the rule-based engine only.
 
 <br>
 
 ## 🏗️ Architecture
 
+The frontend always talks to relative `/api/*` URLs, but where those calls
+actually get answered depends on how the app is deployed. Two backends
+ship in this repo and implement the same routes (auth, chat, FIRs, audit,
+network):
+
 ```mermaid
 flowchart LR
     subgraph Browser
         UI["React + Vite frontend<br/>chat · map · network · trends"]
-        subgraph Local["src/local-api (in-browser)"]
-            Router["Local API router<br/>(intercepts /api/* calls)"]
-            Chat["Chat engine<br/>(rule-based filtering + Gemini AI)"]
-            Routes["FIR / audit / network handlers"]
-        end
-        Data[("Synthetic FIR dataset<br/>in-memory")]
+        LocalAPI["src/local-api<br/>(in-browser router + rule-based/Gemini chat engine)"]
+    end
+
+    subgraph Server["artifacts/api-server (Express, optional)"]
+        SRouter["Express router<br/>/api/*"]
+        SChat["Chat engine<br/>(rule-based, deterministic)"]
+        DB[("Postgres<br/>via Drizzle ORM — currently an empty scaffold")]
     end
 
     subgraph External
         Auth["Firebase Authentication<br/>(Email/Password)"]
-        AI["Google Gemini API<br/>(free tier)"]
+        AI["Google Gemini API<br/>(free tier, browser mode only)"]
         Voice["Sarvam AI<br/>(speech-to-text)"]
     end
 
-    subgraph ZohoCatalyst["Zoho Catalyst"]
-        Hosting["Web Client Hosting<br/>static files only"]
+    subgraph Hosts["Static hosting"]
+        Catalyst["Zoho Catalyst"]
+        FBHosting["Firebase Hosting"]
+        Vercel["Vercel"]
     end
 
     UI -->|"sign in"| Auth
-    UI -->|"/api/*"| Router
-    Router --> Chat
-    Router --> Routes
-    Chat --> Data
-    Chat -->|"generate answer"| AI
     UI -->|"transcribe"| Voice
-    Routes --> Data
-    Hosting -.->|"serves"| UI
+    UI -->|"/api/* (default)"| LocalAPI
+    LocalAPI -->|"generate answer"| AI
+    UI -.->|"/api/* (proxied, prod deploy)"| SRouter
+    SRouter --> SChat
+    SRouter --> DB
+    Catalyst -.->|"serves static build"| UI
+    FBHosting -.->|"serves static build"| UI
+    Vercel -.->|"serves static build +<br/>proxies /api/* to api-server"| UI
 ```
 
-There's no backend server or Cloud Function — every "/api/*" call is
-answered inside the browser by `src/local-api/`. The only external calls
-are to Firebase (auth), Google Gemini (chat answers), and Sarvam AI
-(voice transcription) — all reachable directly from the browser, which is
-why this can run entirely on free tiers.
+**Zero-backend mode (default wiring):** `src/main.tsx` registers the
+in-browser handler from `src/local-api/` for every `/api/*` call, so the
+static build works standalone on a free static host (Zoho Catalyst, or
+Firebase Hosting on the Spark plan) with no server to run or pay for. This
+is the mode the [live demo](#-getting-started) runs in, and it's the only
+place the Gemini AI integration lives.
+
+**Persistent-backend mode:** `artifacts/api-server` is a standalone
+Express 5 app with the same route surface, wired for a real Postgres
+database via Drizzle ORM (the schema is currently an empty scaffold — all
+records still come from the synthetic in-memory dataset). It's meant to
+be deployed separately as a long-running Node process (Render, Railway,
+Fly.io), with the Vite frontend deployed to **Vercel** and a small edge
+function (`api/[...path].ts`) proxying `/api/*` to it — see
+[`DEPLOY.md`](./DEPLOY.md). A Firebase Cloud Functions wrapper for the
+same Express app also exists at `firebase/functions/`.
 
 <br>
 
@@ -165,11 +188,12 @@ why this can run entirely on free tiers.
 
 | Layer | Tools |
 |---|---|
-| **Frontend** | React · Vite · Tailwind CSS · Recharts · Leaflet · `react-force-graph` · `wouter` |
-| **"Backend"** | Plain TypeScript running in the browser (`src/local-api/`) — no server |
+| **Frontend** | React 19 · Vite · Tailwind CSS · Recharts · Leaflet · `react-force-graph` · `wouter` |
+| **Zero-backend mode** | Plain TypeScript running in the browser (`src/local-api/`) — no server |
+| **Persistent-backend mode** | Express 5 (`artifacts/api-server`) · Postgres via Drizzle ORM (`lib/db`) · Zod-validated API contract (`lib/api-spec`, `lib/api-zod`) |
 | **Auth** | Firebase Authentication (Email/Password) |
-| **AI** | Google Gemini API (chat answers) · Sarvam AI (voice transcription) |
-| **Hosting** | Zoho Catalyst — Web Client Hosting |
+| **AI** | Google Gemini API (chat answers, browser mode) · Sarvam AI (voice transcription) |
+| **Hosting** | Zoho Catalyst or Firebase Hosting (static build) · Vercel (frontend, persistent-backend mode) + Render/Railway/Fly.io or Firebase Cloud Functions (API server) |
 | **Monorepo** | pnpm workspaces · TypeScript throughout |
 
 <br>
@@ -177,14 +201,23 @@ why this can run entirely on free tiers.
 ## 🚀 Getting started
 
 **[Try the live demo →](https://scrb-sanket-60080213548.development.catalystserverless.in/app/)**
+(the zero-backend build, running on Zoho Catalyst)
 
 📘 See **[`Credentials.md`](./Credentials.md)** for demo login ID and password.
+
+Want to run it on your own machine instead? See
+**[`RUN-LOCALLY.md`](./RUN-LOCALLY.md)** — it covers installing
+dependencies, environment variables for both the frontend and the API
+server, and running everything with `pnpm dev`.
+
 <br>
 
 ## ☁️ Deployment
 
-The app is fully static (no server, no database) and is hosted on
-**Zoho Catalyst's Web Client Hosting**.
+Pick whichever mode fits:
+
+**Zero-backend (static hosting only)** — the simplest path, no database
+or long-running server required:
 
 ```bash
 npm install -g zcatalyst-cli
@@ -197,13 +230,28 @@ catalyst deploy --only client --prod # promotes to Production
 
 Catalyst deploys to a Development environment first; use the `--prod`
 flag (or the "Migrate to Production" option in the console) to make a
-build publicly reachable.
+build publicly reachable. `firebase.json` is also configured if you'd
+rather deploy the same static build to Firebase Hosting.
 
-Firebase Authentication is still used for login regardless of where the
-static files are hosted — set the six `VITE_FIREBASE_*` variables in your
-`.env` (see `FIREBASE-DEPLOY.md` for creating the Firebase project and
-demo accounts), plus `VITE_GEMINI_API_KEY` and `VITE_SARVAM_API_KEY` for
-the AI chat and voice features.
+Firebase Authentication is used for login regardless of where the static
+files are hosted — set the six `VITE_FIREBASE_*` variables in your `.env`,
+plus `VITE_GEMINI_API_KEY` and `VITE_SARVAM_API_KEY` for the AI chat and
+voice features.
+
+**Persistent backend (Vercel + a Node host)** — for a deployment backed
+by a real Express API and Postgres instead of the in-browser router:
+
+1. Deploy `artifacts/api-server` to a host that runs a persistent Node
+   process (Render, Railway, Fly.io), pointed at a reachable Postgres
+   database.
+2. Deploy the repo to Vercel — `vercel.json` builds just the frontend
+   package, and the `api/[...path].ts` edge function proxies `/api/*`
+   requests to the API server via one `API_ORIGIN` environment variable.
+
+Full step-by-step instructions, including troubleshooting, are in
+**[`DEPLOY.md`](./DEPLOY.md)**. A Firebase Cloud Functions wrapper for the
+same Express app is also available under `firebase/functions/` as another
+way to host the persistent backend.
 
 <br>
 
@@ -212,12 +260,22 @@ the AI chat and voice features.
 ```
 artifacts/
   scrb-sanket/       # React + Vite frontend
-    src/local-api/   # Chat engine, synthetic dataset, local /api/* router
+    src/local-api/   # Chat engine (rule-based + Gemini), synthetic dataset,
+                     #   in-browser /api/* router — zero-backend mode
+  api-server/        # Express 5 API server — persistent-backend mode
+    src/routes/      # auth · chat · firs · audit · network · meta · health
+    src/lib/         # rule-based chat engine, session store, logger
+    src/data/        # synthetic FIR dataset
   mockup-sandbox/    # Component design sandbox
 lib/
   api-spec/          # API contract
   api-zod/           # Generated Zod validators
   api-client-react/  # Generated typed API client (with a local-handler hook)
+  db/                # Drizzle ORM schema (currently an empty scaffold) + client
+firebase/
+  functions/         # Firebase Cloud Functions wrapper around the same Express app
+api/
+  [...path].ts       # Vercel edge function proxying /api/* to the deployed api-server
 ```
 
 <br>
