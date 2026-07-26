@@ -13,7 +13,7 @@
 </p>
 
 <p>
-  <img alt="react" src="https://img.shields.io/badge/React-18-61DAFB?style=flat-square&logo=react&logoColor=black">
+  <img alt="react" src="https://img.shields.io/badge/React-19-61DAFB?style=flat-square&logo=react&logoColor=black">
   <img alt="vite" src="https://img.shields.io/badge/Vite-7-646CFF?style=flat-square&logo=vite&logoColor=white">
   <img alt="typescript" src="https://img.shields.io/badge/TypeScript-5.9-3178C6?style=flat-square&logo=typescript&logoColor=white">
   <img alt="firebase" src="https://img.shields.io/badge/Firebase-Auth-FFCA28?style=flat-square&logo=firebase&logoColor=black">
@@ -25,7 +25,7 @@
 > ⚠️ **Demo environment — synthetic data only, no real case records.**
 > Nothing in this repo touches real CCTNS/SCRB data, real names, logos, signs or real ongoing investigations.
 
-### 🔗 [**Live Demo →**](https://scrb-sanket.web.app) &nbsp;·&nbsp; [**GitHub Repo →**](https://github.com/Naxt318/SCRB-Sanket)
+### 🔗 [**Live Demo →**](https://scrb-sanket-60080213548.development.catalystserverless.in/app/) &nbsp;·&nbsp; [**GitHub Repo →**](https://github.com/Naxt318/SCRB-Sanket)
 
 </div>
 
@@ -39,7 +39,7 @@
 - [Architecture](#-architecture)
 - [Tech stack](#-tech-stack)
 - [Getting started](#-getting-started)
-- [Deployment](#-deployment)
+- [Deployment](#️-deployment)
 - [Project structure](#-project-structure)
 - [Compliance & disclaimers](#-compliance--disclaimers)
 
@@ -165,7 +165,7 @@ why this can run entirely on free tiers.
 
 | Layer | Tools |
 |---|---|
-| **Frontend** | React · Vite · Tailwind CSS · Recharts · Leaflet · `react-force-graph` · `wouter` |
+| **Frontend** | React 19 · Vite · Tailwind CSS · Recharts · Leaflet · `react-force-graph` · `wouter` |
 | **"Backend"** | Plain TypeScript running in the browser (`src/local-api/`) — no server |
 | **Auth** | Firebase Authentication (Email/Password) |
 | **AI** | Google Gemini API (chat answers) · Sarvam AI (voice transcription) |
@@ -176,9 +176,13 @@ why this can run entirely on free tiers.
 
 ## 🚀 Getting started
 
-**[Try the live demo →](https://scrb-sanket.web.app)**
+**[Try the live demo →](https://scrb-sanket-60080213548.development.catalystserverless.in/app/)**
 
 📘 See **[`Credentials.md`](./Credentials.md)** for demo login ID and password.
+
+Want to run it on your own machine instead? See
+**[`RUN-LOCALLY.md`](./RUN-LOCALLY.md)**.
+
 <br>
 
 ## ☁️ Deployment
@@ -201,9 +205,9 @@ build publicly reachable.
 
 Firebase Authentication is still used for login regardless of where the
 static files are hosted — set the six `VITE_FIREBASE_*` variables in your
-`.env` (see `FIREBASE-DEPLOY.md` for creating the Firebase project and
-demo accounts), plus `VITE_GEMINI_API_KEY` and `VITE_SARVAM_API_KEY` for
-the AI chat and voice features.
+`.env` (see [`RUN-LOCALLY.md`](./RUN-LOCALLY.md) for where to get them),
+plus `VITE_GEMINI_API_KEY` and `VITE_SARVAM_API_KEY` for the AI chat and
+voice features.
 
 <br>
 
