@@ -22,7 +22,7 @@ import {
 } from 'lucide-react';
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid, LineChart, Line } from 'recharts';
 import jsPDF from 'jspdf';
-import html2canvas from 'html2canvas';
+import html2canvas from 'html2canvas-pro';
 
 // Sarvam AI speech-to-text (set VITE_SARVAM_API_KEY in your .env)
 const SARVAM_API_KEY = import.meta.env.VITE_SARVAM_API_KEY as string | undefined;

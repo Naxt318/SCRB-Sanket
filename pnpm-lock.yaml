@@ -394,9 +394,9 @@ importers:
       firebase:
         specifier: ^11.2.0
         version: 11.10.0
-      html2canvas:
-        specifier: ^1.4.1
-        version: 1.4.1
+      html2canvas-pro:
+        specifier: ^2.3.1
+        version: 2.3.1
       jspdf:
         specifier: ^4.2.1
         version: 4.2.1
@@ -2723,6 +2723,10 @@ packages:
 
   help-me@5.0.0:
     resolution: {integrity: sha512-7xgomUX6ADmcYzFik0HzAxh/73YlKR9bmFzf51CZwR+b6YtzU2m0u49hQCqV6SvlqIqsaxovfwdvbnsw3b/zpg==}
+
+  html2canvas-pro@2.3.1:
+    resolution: {integrity: sha512-w7CCWi0B0kCy/joy5cPN2GIDGW0iwbqBppxxc2Vc5UyqYDQ1K13ZVr+MyGR/34Mq03emCTxVbBTpG299/prACw==}
+    engines: {node: '>=16.0.0'}
 
   html2canvas@1.4.1:
     resolution: {integrity: sha512-fPU6BHNpsyIhr8yyMpTLLxAbkaK8ArIBcmZIRiBLiDhjeqvXolaEmDGmELFuX9I4xDcaKKcJl+TKZLqruBbmWA==}
@@ -6030,10 +6034,16 @@ snapshots:
 
   help-me@5.0.0: {}
 
+  html2canvas-pro@2.3.1:
+    dependencies:
+      css-line-break: 2.1.0
+      text-segmentation: 1.0.3
+
   html2canvas@1.4.1:
     dependencies:
       css-line-break: 2.1.0
       text-segmentation: 1.0.3
+    optional: true
 
   http-errors@2.0.1:
     dependencies:
