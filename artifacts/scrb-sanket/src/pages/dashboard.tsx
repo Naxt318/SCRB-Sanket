@@ -4,12 +4,14 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell, PieChart, Pie, Cell as PieCell } from 'recharts';
 import { ShieldAlert, FileText, CheckCircle, TrendingUp, AlertTriangle, Activity } from 'lucide-react';
 import { Skeleton } from '@/components/ui/skeleton';
+import { ExplainabilityPanel } from '@/components/shared/ExplainabilityPanel';
+import { ProvenanceBadge } from '@/components/shared/ProvenanceBadge';
 
 export default function Dashboard() {
   const { data: summary, isLoading: loadingSummary } = useGetFirSummary({ query: { queryKey: getGetFirSummaryQueryKey() } });
   const { data: districtStats, isLoading: loadingDistricts } = useGetFirsByDistrict();
   const { data: typeStats, isLoading: loadingTypes } = useGetFirsByType();
-  const { data: earlyWarnings, isLoading: loadingWarnings } = useGetEarlyWarnings();
+  const { data: earlyWarnings, isLoading: loadingWarnings, dataUpdatedAt: warningsUpdatedAt } = useGetEarlyWarnings();
 
   const COLORS = ['hsl(var(--chart-1))', 'hsl(var(--chart-2))', 'hsl(var(--chart-3))', 'hsl(var(--chart-4))', 'hsl(var(--chart-5))'];
 
@@ -139,20 +141,39 @@ export default function Dashboard() {
               No critical early warnings at this time.
             </div>
           ) : (
-            earlyWarnings?.map((warning, i) => (
-              <Card key={i} className="border-l-4 border-l-secondary bg-secondary/5 border-y-border/50 border-r-border/50">
-                <CardContent className="p-4 flex flex-col justify-center h-full">
-                  <div className="flex justify-between items-start mb-2">
-                    <span className="text-xs font-bold text-secondary uppercase tracking-wider">{warning.district}</span>
-                    <Badge variant="outline" className="bg-secondary/20 text-secondary border-secondary/30">
-                      +{warning.percentIncrease}%
-                    </Badge>
-                  </div>
-                  <h4 className="font-semibold text-foreground mb-1">{warning.crimeType} Surge</h4>
-                  <p className="text-xs text-muted-foreground">{warning.message}</p>
-                </CardContent>
-              </Card>
-            ))
+            earlyWarnings?.map((warning, i) => {
+              const severityWeight: Record<string, number> = { low: 25, medium: 50, high: 75, critical: 100 };
+              const trendPct = Math.min(100, Math.abs(warning.percentIncrease));
+              const volumePct = Math.min(100, warning.recentCount * 5);
+              const severityPct = severityWeight[warning.severity || 'medium'] ?? 50;
+
+              return (
+                <Card key={i} className="border-l-4 border-l-secondary bg-secondary/5 border-y-border/50 border-r-border/50">
+                  <CardContent className="p-4 flex flex-col justify-center h-full">
+                    <div className="flex justify-between items-start mb-2">
+                      <span className="text-xs font-bold text-secondary uppercase tracking-wider">{warning.district}</span>
+                      <div className="flex items-center gap-1.5">
+                        <Badge variant="outline" className="bg-secondary/20 text-secondary border-secondary/30">
+                          +{warning.percentIncrease}%
+                        </Badge>
+                        <ProvenanceBadge source="Synthetic FIR Dataset (Early Warning Model)" timestamp={warningsUpdatedAt} />
+                      </div>
+                    </div>
+                    <h4 className="font-semibold text-foreground mb-1">{warning.crimeType} Surge</h4>
+                    <p className="text-xs text-muted-foreground mb-1">{warning.message}</p>
+                    <ExplainabilityPanel
+                      className="mt-1"
+                      summary={`Flagged from a ${warning.percentIncrease}% rise in reports (${warning.recentCount} recent vs ${warning.previousCount ?? '—'} prior).`}
+                      factors={[
+                        { label: 'Trend Delta', value: trendPct, detail: `+${warning.percentIncrease}%` },
+                        { label: 'Recent Volume', value: volumePct, detail: `${warning.recentCount} incidents` },
+                        { label: 'Severity Weight', value: severityPct, detail: (warning.severity || 'medium').toUpperCase() },
+                      ]}
+                    />
+                  </CardContent>
+                </Card>
+              );
+            })
           )}
         </div>
       </div>

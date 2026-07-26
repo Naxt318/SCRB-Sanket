@@ -2,25 +2,72 @@ import React, { useState } from 'react';
 import { useGetAuditLog } from '@workspace/api-client-react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { FileText, Search, Shield } from 'lucide-react';
+import { FileText, Search, Shield, Filter, X } from 'lucide-react';
 import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 import { format } from 'date-fns';
 
 export default function AuditLogs() {
   const [search, setSearch] = useState('');
+  const [userFilter, setUserFilter] = useState<string>('all');
+  const [roleFilter, setRoleFilter] = useState<string>('all');
+  const [dateFrom, setDateFrom] = useState('');
+  const [dateTo, setDateTo] = useState('');
   const { data: logs, isLoading } = useGetAuditLog({ limit: 100 });
+
+  const users = React.useMemo(() => {
+    if (!logs) return [];
+    const seen = new Map<string, string>();
+    logs.forEach((log) => seen.set(log.userId, log.userName));
+    return Array.from(seen.entries()).map(([userId, userName]) => ({ userId, userName }));
+  }, [logs]);
+
+  const roles = React.useMemo(() => {
+    if (!logs) return [];
+    return Array.from(new Set(logs.map((log) => log.role).filter(Boolean))) as string[];
+  }, [logs]);
 
   const filteredLogs = React.useMemo(() => {
     if (!logs) return [];
-    if (!search) return logs;
-    const lower = search.toLowerCase();
-    return logs.filter(log => 
-      log.userName.toLowerCase().includes(lower) || 
-      log.query.toLowerCase().includes(lower) ||
-      log.userId.toLowerCase().includes(lower)
-    );
-  }, [logs, search]);
+    let result = logs;
+
+    if (search) {
+      const lower = search.toLowerCase();
+      result = result.filter(log =>
+        log.userName.toLowerCase().includes(lower) ||
+        log.query.toLowerCase().includes(lower) ||
+        log.userId.toLowerCase().includes(lower)
+      );
+    }
+    if (userFilter !== 'all') {
+      result = result.filter((log) => log.userId === userFilter);
+    }
+    if (roleFilter !== 'all') {
+      result = result.filter((log) => log.role === roleFilter);
+    }
+    if (dateFrom) {
+      const from = new Date(dateFrom).getTime();
+      result = result.filter((log) => new Date(log.timestamp).getTime() >= from);
+    }
+    if (dateTo) {
+      // Include the entire "to" day
+      const to = new Date(dateTo).getTime() + 24 * 60 * 60 * 1000 - 1;
+      result = result.filter((log) => new Date(log.timestamp).getTime() <= to);
+    }
+    return result;
+  }, [logs, search, userFilter, roleFilter, dateFrom, dateTo]);
+
+  const activeFilterCount = [userFilter !== 'all', roleFilter !== 'all', !!dateFrom, !!dateTo].filter(Boolean).length;
+
+  const clearFilters = () => {
+    setUserFilter('all');
+    setRoleFilter('all');
+    setDateFrom('');
+    setDateTo('');
+  };
 
   return (
     <div className="flex flex-col h-full gap-4">
@@ -42,6 +89,64 @@ export default function AuditLogs() {
             className="pl-9 bg-card border-border/50"
           />
         </div>
+      </div>
+
+      {/* Filters Panel */}
+      <Card className="border-border/50 bg-card/50">
+        <CardContent className="p-4">
+          <div className="flex items-center gap-2 mb-3">
+            <Filter className="w-3.5 h-3.5 text-muted-foreground" />
+            <h3 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Filter Records</h3>
+            {activeFilterCount > 0 && (
+              <Button variant="ghost" size="sm" className="h-6 ml-auto text-xs text-muted-foreground hover:text-destructive" onClick={clearFilters}>
+                <X className="w-3 h-3 mr-1" />
+                Clear ({activeFilterCount})
+              </Button>
+            )}
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-3">
+            <div className="space-y-1.5">
+              <Label className="text-[10px] uppercase text-muted-foreground">Officer / User</Label>
+              <Select value={userFilter} onValueChange={setUserFilter}>
+                <SelectTrigger className="bg-background/50 border-border/50 h-9 text-xs">
+                  <SelectValue placeholder="All Users" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All Users</SelectItem>
+                  {users.map((u) => (
+                    <SelectItem key={u.userId} value={u.userId}>{u.userName}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="space-y-1.5">
+              <Label className="text-[10px] uppercase text-muted-foreground">Role</Label>
+              <Select value={roleFilter} onValueChange={setRoleFilter}>
+                <SelectTrigger className="bg-background/50 border-border/50 h-9 text-xs">
+                  <SelectValue placeholder="All Roles" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All Roles</SelectItem>
+                  {roles.map((r) => (
+                    <SelectItem key={r} value={r}>{r}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="space-y-1.5">
+              <Label className="text-[10px] uppercase text-muted-foreground">From Date</Label>
+              <Input type="date" value={dateFrom} onChange={(e) => setDateFrom(e.target.value)} className="bg-background/50 border-border/50 h-9 text-xs" />
+            </div>
+            <div className="space-y-1.5">
+              <Label className="text-[10px] uppercase text-muted-foreground">To Date</Label>
+              <Input type="date" value={dateTo} onChange={(e) => setDateTo(e.target.value)} className="bg-background/50 border-border/50 h-9 text-xs" />
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+
+      <div className="text-xs text-muted-foreground -mt-1">
+        Showing {filteredLogs.length} of {logs?.length ?? 0} records
       </div>
 
       <Card className="flex-1 border-border/50 bg-card/50 overflow-hidden flex flex-col">
@@ -71,7 +176,7 @@ export default function AuditLogs() {
                 <TableRow>
                   <TableCell colSpan={5} className="h-48 text-center text-muted-foreground">
                     <Shield className="w-8 h-8 mx-auto mb-2 opacity-50" />
-                    No audit records found matching criteria.
+                    No audit records found matching current filters.
                   </TableCell>
                 </TableRow>
               ) : (

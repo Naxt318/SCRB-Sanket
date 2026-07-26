@@ -115,6 +115,11 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
           <main className="flex-1 overflow-auto bg-background p-4 md:p-6 relative">
             {children}
           </main>
+
+          {/* Persistent Footer Disclaimer */}
+          <footer className="shrink-0 text-center text-[10px] text-muted-foreground py-1.5 px-4 border-t border-border bg-card/50">
+            Every logo or any logo is for representation purpose only, no relation to real resemblance.
+          </footer>
         </div>
       </div>
     </div>

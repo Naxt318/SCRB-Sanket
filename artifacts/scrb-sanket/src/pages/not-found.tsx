@@ -3,7 +3,7 @@ import { AlertCircle } from 'lucide-react';
 
 export default function NotFound() {
   return (
-    <div className="min-h-screen w-full flex items-center justify-center bg-gray-50">
+    <div className="min-h-screen w-full flex items-center justify-center bg-gray-50 relative">
       <Card className="w-full max-w-md mx-4">
         <CardContent className="pt-6">
           <div className="flex mb-4 gap-2">
@@ -18,6 +18,9 @@ export default function NotFound() {
           </p>
         </CardContent>
       </Card>
+      <p className="text-center text-[10px] text-gray-500 mt-4 absolute bottom-4">
+        Every logo or any logo is for representation purpose only, no relation to real resemblance.
+      </p>
     </div>
   );
 }

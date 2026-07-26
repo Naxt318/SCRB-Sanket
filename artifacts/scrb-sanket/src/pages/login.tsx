@@ -130,6 +130,9 @@ export default function Login() {
             </div>
           </CardFooter>
         </Card>
+        <p className="text-center text-[10px] text-muted-foreground mt-4">
+          Every logo or any logo is for representation purpose only, no relation to real resemblance.
+        </p>
       </div>
     </div>
   );
