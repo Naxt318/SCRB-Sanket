@@ -2,7 +2,7 @@
 
 <img src="./attached_assets/karnataka-emblem.png" width="100" alt="Karnataka State Emblem">
 
-<br><br>
+<br>
 
 # 🛡️ S C R B &nbsp; S A N K E T
 
@@ -16,7 +16,7 @@
   <img alt="status" src="https://img.shields.io/badge/status-prototype-blueviolet?style=for-the-badge">
   <img alt="data" src="https://img.shields.io/badge/data-synthetic%20only-critical?style=for-the-badge">
   <img alt="license" src="https://img.shields.io/badge/license-MIT-informational?style=for-the-badge">
-  <img alt="backend" src="https://img.shields.io/badge/backend-none%20required-success?style=for-the-badge">
+  <img alt="backend" src="https://img.shields.io/badge/architecture-zero--infra-success?style=for-the-badge">
 </p>
 
 <p>
@@ -245,21 +245,21 @@ flowchart LR
 
 <div align="center">
 
-### 🚫 No backend server &nbsp;·&nbsp; 🚫 No Cloud Function &nbsp;·&nbsp; 🚫 No database
+### ⚡ Zero Infrastructure &nbsp;·&nbsp; 💸 Zero Hosting Cost &nbsp;·&nbsp; 🚀 Deploy Anywhere in Minutes
 
 </div>
 
 <br>
 
-Every `/api/*` call is answered inside the browser by `src/local-api/`. The only external calls are to Firebase (auth), Google Gemini (chat answers), and Sarvam AI (voice transcription) — all reachable directly from the browser, which is why this can run entirely on free tiers.
+Every `/api/*` call is answered instantly inside the browser by `src/local-api/` — a fully deterministic, production-shaped API layer with no server to provision, no database to manage, and no infrastructure to keep alive. The only outbound calls are to Firebase (auth), Google Gemini (chat answers), and Sarvam AI (voice transcription) — all reachable straight from the browser, which is exactly why SCRB Sanket can be built, deployed, and demoed entirely on free tiers.
 
 <br>
 
 <details>
-<summary><b>🔍 Why build it this way?</b></summary>
+<summary><b>🔍 Why this architecture is a strength, not a shortcut</b></summary>
 <br>
 
-A real deployment behind SCRB's own infrastructure would obviously sit behind a proper backend and a real database. For a hackathon prototype, though, every extra moving part is one more thing that can go wrong on demo day — so the "backend" here is just deterministic TypeScript running in the visitor's own browser, backed by a synthetic dataset. Zero infra to keep alive, zero hosting cost, and the exact same user-facing behavior a real backend would produce.
+The API surface is fully spec'd and typed end-to-end — an OpenAPI contract (`lib/api-spec`), generated Zod validators (`lib/api-zod`), and a typed React client (`lib/api-client-react`) — exactly what you'd build for a real backend. The in-browser router (`src/local-api/`) implements that same contract, so the entire app behaves identically to a server-backed system: same requests, same responses, same reasoning trail. That means a real production deployment behind SCRB's own infrastructure is a drop-in swap, not a rewrite — while the prototype itself stays fast to iterate on, free to host, and painless to demo.
 
 </details>
 
@@ -274,7 +274,7 @@ A real deployment behind SCRB's own infrastructure would obviously sit behind a 
 | Layer | Tools |
 |---|---|
 | 🎨 **Frontend** | React 19 · Vite · Tailwind CSS · Recharts · Leaflet · `react-force-graph` · `wouter` |
-| ⚙️ **"Backend"** | Plain TypeScript running in the browser (`src/local-api/`) — no server |
+| ⚡ **Zero-infra engine** | Fully deterministic, spec-typed API layer running client-side (`src/local-api/`) — no server to run or pay for |
 | 🔑 **Auth** | Firebase Authentication (Email/Password) |
 | 🤖 **AI** | Google Gemini API (chat answers) · Sarvam AI (voice transcription) |
 | ☁️ **Hosting** | Zoho Catalyst — Web Client Hosting |
@@ -308,7 +308,7 @@ Want to run it on your own machine instead? See **[`RUN-LOCALLY.md`](./RUN-LOCAL
 
 ## ☁️ Deployment
 
-The app is fully static (no server, no database) and is hosted on **Zoho Catalyst's Web Client Hosting**.
+The entire app ships as a single static build — no server to provision, no database to manage — and deploys to **Zoho Catalyst's Web Client Hosting** in minutes.
 
 ```bash
 npm install -g zcatalyst-cli
