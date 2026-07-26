@@ -14,7 +14,7 @@
 import type { LocalHandler, LocalHandlerResult } from "@workspace/api-client-react";
 import { auth } from "@/lib/firebase";
 import { getFirs, getPersons, DISTRICTS, CRIME_TYPES } from "./synthetic-firs";
-import { processQuery } from "./chat-engine";
+import { processQueryWithAI } from "./chat-engine";
 import { sessionStore } from "./session-store";
 import { profileForEmail } from "./demo-profiles";
 
@@ -50,7 +50,7 @@ function handleAuthMe() {
 }
 
 // ── /chat ────────────────────────────────────────────────────────────────
-function handleChat(body: unknown) {
+async function handleChat(body: unknown) {
   const { message, language = "english", sessionId } = (body ?? {}) as Record<string, unknown>;
 
   if (!message || typeof message !== "string") {
@@ -71,7 +71,7 @@ function handleChat(body: unknown) {
   };
   sessionStore.addMessage(userMsg);
 
-  const result = processQuery(message, history);
+  const result = await processQueryWithAI(message, history);
 
   let chartData: unknown = null;
   const byMonth: Record<string, number> = {};
@@ -514,7 +514,7 @@ function handleAuditLog(params: URLSearchParams) {
 }
 
 // ── dispatch table ───────────────────────────────────────────────────────
-type Route = { method: string; pattern: RegExp; handle: (params: URLSearchParams, body: unknown) => LocalHandlerResult };
+type Route = { method: string; pattern: RegExp; handle: (params: URLSearchParams, body: unknown) => LocalHandlerResult | Promise<LocalHandlerResult> };
 
 const routes: Route[] = [
   { method: "GET", pattern: /^\/api\/healthz$/, handle: () => json(200, { status: "ok" }) },

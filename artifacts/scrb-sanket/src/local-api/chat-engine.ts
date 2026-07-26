@@ -280,6 +280,95 @@ ${Math.abs(pctChange) > 20 ? "⚠️ **Early Warning:** This trend exceeds the 2
 }
 
 // ──────────────────────────────────────────────
+// Real AI layer (Google Gemini — free tier)
+// ──────────────────────────────────────────────
+// Falls back to the deterministic templates above if no API key is set,
+// or if the call fails for any reason (offline, rate-limited, etc.) —
+// the app always stays functional either way.
+
+const GEMINI_API_KEY = import.meta.env.VITE_GEMINI_API_KEY as string | undefined;
+const GEMINI_MODEL = "gemini-2.0-flash";
+
+function summarizeForAI(filtered: SyntheticFir[], intent: QueryIntent, timeLabel: string): string {
+  const byDistrict: Record<string, number> = {};
+  const byType: Record<string, number> = {};
+  const byMonth: Record<string, number> = {};
+  filtered.forEach((f) => {
+    byDistrict[f.district] = (byDistrict[f.district] || 0) + 1;
+    byType[f.crimeType] = (byType[f.crimeType] || 0) + 1;
+    const m = f.dateOfIncident.substring(0, 7);
+    byMonth[m] = (byMonth[m] || 0) + 1;
+  });
+
+  const topDistricts = Object.entries(byDistrict).sort((a, b) => b[1] - a[1]).slice(0, 5);
+  const topTypes = Object.entries(byType).sort((a, b) => b[1] - a[1]).slice(0, 5);
+  const monthly = Object.entries(byMonth).sort((a, b) => a[0].localeCompare(b[0])).slice(-6);
+
+  return [
+    `Total matching cases: ${filtered.length}`,
+    `Time range: ${timeLabel}`,
+    intent.crimeType ? `Crime type filter: ${intent.crimeType}` : `Crime type filter: none (all types)`,
+    intent.district ? `District filter: ${districtName(intent.district)}` : `District filter: none (all districts)`,
+    `By district: ${topDistricts.map(([d, c]) => `${districtName(d)}=${c}`).join(", ") || "none"}`,
+    `By crime type: ${topTypes.map(([t, c]) => `${t}=${c}`).join(", ") || "none"}`,
+    `Monthly counts: ${monthly.map(([m, c]) => `${m}=${c}`).join(", ") || "none"}`,
+  ].join("\n");
+}
+
+async function generateAiAnswer(
+  message: string,
+  filtered: SyntheticFir[],
+  intent: QueryIntent,
+  timeLabel: string,
+  sessionHistory: Array<{ role: "user" | "assistant"; content: string }>
+): Promise<string | null> {
+  if (!GEMINI_API_KEY) return null;
+
+  const dataSummary = summarizeForAI(filtered, intent, timeLabel);
+  const historyText = sessionHistory
+    .slice(-6)
+    .map((m) => `${m.role === "user" ? "Investigator" : "Assistant"}: ${m.content}`)
+    .join("\n");
+
+  const prompt = `You are SANKET, an AI crime-intelligence assistant for the Karnataka State Crime Records Bureau (SCRB). You are speaking to a police investigator, supervisor, or admin using a command-center dashboard.
+
+IMPORTANT RULES:
+- All data below is 100% SYNTHETIC (fake, generated for a demo). Never imply it is real.
+- Be concise, professional, and factual — like a crime analyst briefing an officer.
+- Use the data summary below to ground your answer. Do not invent numbers not present in it.
+- Use markdown (bold for key numbers) where helpful.
+- End with a short note that this is synthetic data and human investigators must verify findings before action.
+- Answer in ${intent ? "English" : "English"}.
+
+${historyText ? `Recent conversation:\n${historyText}\n` : ""}
+Data summary for the current query:
+${dataSummary}
+
+Investigator's question: "${message}"
+
+Give a direct, helpful answer grounded in the data summary above.`;
+
+  try {
+    const res = await fetch(
+      `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent?key=${GEMINI_API_KEY}`,
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          contents: [{ parts: [{ text: prompt }] }],
+        }),
+      }
+    );
+    if (!res.ok) return null;
+    const data = await res.json();
+    const text = data?.candidates?.[0]?.content?.parts?.[0]?.text;
+    return typeof text === "string" && text.trim() ? text.trim() : null;
+  } catch {
+    return null;
+  }
+}
+
+// ──────────────────────────────────────────────
 // Main entry point
 // ──────────────────────────────────────────────
 
@@ -377,4 +466,33 @@ ${filtered.filter(f => f.personIds.length > 0).length} cases have linked persons
   });
 
   return { answer, firs: filtered.slice(0, 50), intent, reasoning, sources };
+}
+
+// Async version used by the chat route — tries real AI (Gemini) first,
+// falls back to the deterministic answer above if unavailable/unconfigured.
+export async function processQueryWithAI(
+  message: string,
+  sessionHistory: Array<{ role: "user" | "assistant"; content: string }> = []
+): Promise<ChatEngineResult & { aiPowered: boolean }> {
+  const ruleBasedResult = processQuery(message, sessionHistory);
+
+  const aiAnswer = await generateAiAnswer(
+    message,
+    ruleBasedResult.firs,
+    ruleBasedResult.intent,
+    ruleBasedResult.intent.timeRange ?? "the selected period",
+    sessionHistory
+  );
+
+  if (aiAnswer) {
+    return {
+      ...ruleBasedResult,
+      answer: aiAnswer,
+      reasoning: [...ruleBasedResult.reasoning, "Generated natural-language answer via Gemini AI, grounded in the filtered dataset above."],
+      sources: [...ruleBasedResult.sources, "AI model: Google Gemini (gemini-2.0-flash)"],
+      aiPowered: true,
+    };
+  }
+
+  return { ...ruleBasedResult, aiPowered: false };
 }

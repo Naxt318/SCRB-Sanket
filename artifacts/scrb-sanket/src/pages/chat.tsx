@@ -22,14 +22,17 @@ import {
 } from 'lucide-react';
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid, LineChart, Line } from 'recharts';
 
-// Speech recognition fallback
-const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
+// Sarvam AI speech-to-text (set VITE_SARVAM_API_KEY in your .env)
+const SARVAM_API_KEY = import.meta.env.VITE_SARVAM_API_KEY as string | undefined;
 
 export default function Chat() {
   const [sessionId] = useState(() => crypto.randomUUID());
   const [input, setInput] = useState('');
   const [language, setLanguage] = useState<ChatMessageInputLanguage>('english');
   const [isListening, setIsListening] = useState(false);
+  const [isTranscribing, setIsTranscribing] = useState(false);
+  const mediaRecorderRef = useRef<MediaRecorder | null>(null);
+  const audioChunksRef = useRef<Blob[]>([]);
   const scrollRef = useRef<HTMLDivElement>(null);
   const queryClient = useQueryClient();
 
@@ -85,22 +88,69 @@ export default function Chat() {
     });
   };
 
-  const handleVoice = () => {
-    if (!SpeechRecognition) return alert('Speech recognition not supported in this browser.');
-    
-    const recognition = new SpeechRecognition();
-    recognition.lang = language === 'kannada' ? 'kn-IN' : 'en-IN';
-    recognition.interimResults = false;
-    
-    recognition.onstart = () => setIsListening(true);
-    recognition.onresult = (event: any) => {
-      const transcript = event.results[0][0].transcript;
-      setInput(prev => prev + (prev ? ' ' : '') + transcript);
-    };
-    recognition.onerror = () => setIsListening(false);
-    recognition.onend = () => setIsListening(false);
-    
-    recognition.start();
+  const transcribeWithSarvam = async (audioBlob: Blob) => {
+    if (!SARVAM_API_KEY) {
+      alert('Sarvam AI is not configured — set VITE_SARVAM_API_KEY in your .env file.');
+      return;
+    }
+
+    setIsTranscribing(true);
+    try {
+      const formData = new FormData();
+      formData.append('file', audioBlob, 'recording.webm');
+      formData.append('model', 'saaras:v3');
+      formData.append('language_code', language === 'kannada' ? 'kn-IN' : 'en-IN');
+
+      const res = await fetch('https://api.sarvam.ai/speech-to-text', {
+        method: 'POST',
+        headers: { 'api-subscription-key': SARVAM_API_KEY },
+        body: formData,
+      });
+
+      if (!res.ok) throw new Error(`Sarvam API error: ${res.status}`);
+
+      const data = await res.json();
+      const transcript = data.transcript as string;
+      if (transcript) {
+        setInput((prev) => prev + (prev ? ' ' : '') + transcript);
+      }
+    } catch (err) {
+      console.error(err);
+      alert('Voice transcription failed. Please try again.');
+    } finally {
+      setIsTranscribing(false);
+    }
+  };
+
+  const handleVoice = async () => {
+    // Currently recording -> stop and send to Sarvam
+    if (isListening && mediaRecorderRef.current) {
+      mediaRecorderRef.current.stop();
+      setIsListening(false);
+      return;
+    }
+
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      const recorder = new MediaRecorder(stream);
+      audioChunksRef.current = [];
+
+      recorder.ondataavailable = (e) => {
+        if (e.data.size > 0) audioChunksRef.current.push(e.data);
+      };
+      recorder.onstop = () => {
+        stream.getTracks().forEach((track) => track.stop());
+        const audioBlob = new Blob(audioChunksRef.current, { type: 'audio/webm' });
+        transcribeWithSarvam(audioBlob);
+      };
+
+      mediaRecorderRef.current = recorder;
+      recorder.start();
+      setIsListening(true);
+    } catch (err) {
+      console.error(err);
+      alert('Microphone access denied or unavailable.');
+    }
   };
 
   const exportPDF = () => {
@@ -168,7 +218,8 @@ export default function Chat() {
             variant="outline" 
             size="icon"
             onClick={handleVoice}
-            className={`shrink-0 ${isListening ? 'bg-destructive/20 text-destructive border-destructive/50 animate-pulse' : 'text-muted-foreground'}`}
+            disabled={isTranscribing}
+            className={`shrink-0 ${isListening ? 'bg-destructive/20 text-destructive border-destructive/50 animate-pulse' : isTranscribing ? 'opacity-60' : 'text-muted-foreground'}`}
           >
             <Mic className="w-4 h-4" />
           </Button>
