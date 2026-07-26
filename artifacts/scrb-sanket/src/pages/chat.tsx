@@ -36,12 +36,12 @@ export default function Chat() {
   const scrollRef = useRef<HTMLDivElement>(null);
   const queryClient = useQueryClient();
 
-  const { data: history, isLoading: loadingHistory } = useGetChatHistory({
-    query: { queryKey: getGetChatHistoryQueryKey() }
+  const { data: history, isLoading: loadingHistory } = useGetChatHistory(sessionId, {
+    query: { queryKey: getGetChatHistoryQueryKey(sessionId) }
   });
 
   const sendMutation = useSendChatMessage();
-  const clearMutation = useClearChatHistory();
+  const clearMutation = useClearChatHistory(sessionId);
 
   // Scroll to bottom on new messages
   useEffect(() => {
@@ -58,19 +58,19 @@ export default function Chat() {
     setInput('');
 
     // Optimistic update
-    const prevHistory = queryClient.getQueryData(getGetChatHistoryQueryKey()) as any[] || [];
-    queryClient.setQueryData(getGetChatHistoryQueryKey(), [
+    const prevHistory = queryClient.getQueryData(getGetChatHistoryQueryKey(sessionId)) as any[] || [];
+    queryClient.setQueryData(getGetChatHistoryQueryKey(sessionId), [
       ...prevHistory,
       { id: 'temp-' + Date.now(), role: ChatMessageRole.user, content: message, timestamp: new Date().toISOString() }
     ]);
 
     sendMutation.mutate({ data: { message, language, sessionId } }, {
       onSuccess: () => {
-        queryClient.invalidateQueries({ queryKey: getGetChatHistoryQueryKey() });
+        queryClient.invalidateQueries({ queryKey: getGetChatHistoryQueryKey(sessionId) });
       },
       onError: () => {
         // Rollback on error
-        queryClient.setQueryData(getGetChatHistoryQueryKey(), prevHistory);
+        queryClient.setQueryData(getGetChatHistoryQueryKey(sessionId), prevHistory);
         setInput(message);
       }
     });
@@ -83,7 +83,7 @@ export default function Chat() {
   const handleClear = () => {
     clearMutation.mutate(undefined, {
       onSuccess: () => {
-        queryClient.invalidateQueries({ queryKey: getGetChatHistoryQueryKey() });
+        queryClient.invalidateQueries({ queryKey: getGetChatHistoryQueryKey(sessionId) });
       }
     });
   };

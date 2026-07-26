@@ -296,20 +296,20 @@ export const useSendChatMessage = <TError = ErrorType<unknown>,
       return useMutation(getSendChatMessageMutationOptions(options));
     }
 
-export const getGetChatHistoryUrl = () => {
+export const getGetChatHistoryUrl = (sessionId: string) => {
+  const normalizedParams = new URLSearchParams();
+  normalizedParams.append('sessionId', sessionId);
+  const stringifiedParams = normalizedParams.toString();
 
-
-
-
-  return `/api/chat/history`
+  return stringifiedParams.length > 0 ? `/api/chat/history?${stringifiedParams}` : `/api/chat/history`
 }
 
 /**
  * @summary Get conversation history for current session
  */
-export const getChatHistory = async ( options?: RequestInit): Promise<ChatMessage[]> => {
+export const getChatHistory = async ( sessionId: string, options?: RequestInit): Promise<ChatMessage[]> => {
 
-  return customFetch<ChatMessage[]>(getGetChatHistoryUrl(),
+  return customFetch<ChatMessage[]>(getGetChatHistoryUrl(sessionId),
   {
     ...options,
     method: 'GET'
@@ -321,24 +321,23 @@ export const getChatHistory = async ( options?: RequestInit): Promise<ChatMessag
 
 
 
-
-export const getGetChatHistoryQueryKey = () => {
+export const getGetChatHistoryQueryKey = (sessionId: string) => {
     return [
-    `/api/chat/history`
+    `/api/chat/history`, sessionId
     ] as const;
     }
 
 
-export const getGetChatHistoryQueryOptions = <TData = Awaited<ReturnType<typeof getChatHistory>>, TError = ErrorType<unknown>>( options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof getChatHistory>>, TError, TData>, request?: SecondParameter<typeof customFetch>}
+export const getGetChatHistoryQueryOptions = <TData = Awaited<ReturnType<typeof getChatHistory>>, TError = ErrorType<unknown>>(sessionId: string, options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof getChatHistory>>, TError, TData>, request?: SecondParameter<typeof customFetch>}
 ) => {
 
 const {query: queryOptions, request: requestOptions} = options ?? {};
 
-  const queryKey =  queryOptions?.queryKey ?? getGetChatHistoryQueryKey();
+  const queryKey =  queryOptions?.queryKey ?? getGetChatHistoryQueryKey(sessionId);
 
 
 
-    const queryFn: QueryFunction<Awaited<ReturnType<typeof getChatHistory>>> = ({ signal }) => getChatHistory({ signal, ...requestOptions });
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof getChatHistory>>> = ({ signal }) => getChatHistory(sessionId, { signal, ...requestOptions });
 
 
 
@@ -355,12 +354,12 @@ export type GetChatHistoryQueryError = ErrorType<unknown>
  * @summary Get conversation history for current session
  */
 
-export function useGetChatHistory<TData = Awaited<ReturnType<typeof getChatHistory>>, TError = ErrorType<unknown>>(
+export function useGetChatHistory<TData = Awaited<ReturnType<typeof getChatHistory>>, TError = ErrorType<unknown>>(sessionId: string,
   options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof getChatHistory>>, TError, TData>, request?: SecondParameter<typeof customFetch>}
 
  ):  UseQueryResult<TData, TError> & { queryKey: QueryKey } {
 
-  const queryOptions = getGetChatHistoryQueryOptions(options)
+  const queryOptions = getGetChatHistoryQueryOptions(sessionId, options)
 
   const query = useQuery(queryOptions) as  UseQueryResult<TData, TError> & { queryKey: QueryKey };
 
@@ -373,20 +372,20 @@ export function useGetChatHistory<TData = Awaited<ReturnType<typeof getChatHisto
 
 
 
-export const getClearChatHistoryUrl = () => {
+export const getClearChatHistoryUrl = (sessionId: string) => {
+  const normalizedParams = new URLSearchParams();
+  normalizedParams.append('sessionId', sessionId);
+  const stringifiedParams = normalizedParams.toString();
 
-
-
-
-  return `/api/chat/history`
+  return stringifiedParams.length > 0 ? `/api/chat/history?${stringifiedParams}` : `/api/chat/history`
 }
 
 /**
  * @summary Clear chat history
  */
-export const clearChatHistory = async ( options?: RequestInit): Promise<SuccessResponse> => {
+export const clearChatHistory = async ( sessionId: string, options?: RequestInit): Promise<SuccessResponse> => {
 
-  return customFetch<SuccessResponse>(getClearChatHistoryUrl(),
+  return customFetch<SuccessResponse>(getClearChatHistoryUrl(sessionId),
   {
     ...options,
     method: 'DELETE'
@@ -400,7 +399,7 @@ export const clearChatHistory = async ( options?: RequestInit): Promise<SuccessR
 
 
 export const getClearChatHistoryMutationOptions = <TError = ErrorType<unknown>,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof clearChatHistory>>, TError,void, TContext>, request?: SecondParameter<typeof customFetch>}
+    TContext = unknown>(sessionId: string, options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof clearChatHistory>>, TError,void, TContext>, request?: SecondParameter<typeof customFetch>}
 ): UseMutationOptions<Awaited<ReturnType<typeof clearChatHistory>>, TError,void, TContext> => {
 
 const mutationKey = ['clearChatHistory'];
@@ -416,7 +415,7 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
       const mutationFn: MutationFunction<Awaited<ReturnType<typeof clearChatHistory>>, void> = () => {
 
 
-          return  clearChatHistory(requestOptions)
+          return  clearChatHistory(sessionId, requestOptions)
         }
 
 
@@ -434,14 +433,14 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
  * @summary Clear chat history
  */
 export const useClearChatHistory = <TError = ErrorType<unknown>,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof clearChatHistory>>, TError,void, TContext>, request?: SecondParameter<typeof customFetch>}
+    TContext = unknown>(sessionId: string, options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof clearChatHistory>>, TError,void, TContext>, request?: SecondParameter<typeof customFetch>}
  ): UseMutationResult<
         Awaited<ReturnType<typeof clearChatHistory>>,
         TError,
         void,
         TContext
       > => {
-      return useMutation(getClearChatHistoryMutationOptions(options));
+      return useMutation(getClearChatHistoryMutationOptions(sessionId, options));
     }
 
 export const getGetFirsUrl = (params?: GetFirsParams,) => {
