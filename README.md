@@ -37,7 +37,8 @@
 
 > [!WARNING]
 > **Demo environment — synthetic data only, no real case records.**
-> Nothing in this repo touches real CCTNS/SCRB data, real names, logos, signs or real ongoing investigations.
+> Nothing in this repo harms real CCTNS/SCRB data, real names, logos, signs or real ongoing investigations.
+> Its made for representation purposes only.
 
 <div align="center">
 
