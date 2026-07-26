@@ -25,7 +25,7 @@
 > ⚠️ **Demo environment — synthetic data only, no real case records.**
 > Nothing in this repo touches real CCTNS/SCRB data, real names, logos, signs or real ongoing investigations.
 
-### 🔗 [**Live Demo →**](https://scrb-sanket.web.app) &nbsp;·&nbsp; [**GitHub Repo →**](https://github.com/Naxt318/SCRB-Sanket)
+### 🔗 [**Live Demo →**](https://scrb-sanket-60080213548.development.catalystserverless.in/app/) &nbsp;·&nbsp; [**GitHub Repo →**](https://github.com/Naxt318/SCRB-Sanket)
 
 </div>
 
@@ -176,7 +176,7 @@ why this can run entirely on free tiers.
 
 ## 🚀 Getting started
 
-**[Try the live demo →](https://scrb-sanket.web.app)**
+**[Try the live demo →](https://scrb-sanket-60080213548.development.catalystserverless.in/app/)**
 
 📘 See **[`Credentials.md`](./Credentials.md)** for demo login ID and password.
 <br>
