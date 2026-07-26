@@ -2,5 +2,6 @@
   "name": "SCRBSanket",
   "version": "1.0.0",
   "description": "AI Crime Intelligence Platform for Karnataka State Crime Records Bureau",
-  "homepage": "index.html"
+  "homepage": "index.html",
+  "404": "404.html"
 }

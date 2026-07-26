@@ -11,7 +11,7 @@ interface ProvenanceBadgeProps {
   /** Where the data came from, e.g. "Synthetic FIR Dataset" */
   source: string;
   /** When the underlying data was generated / fetched */
-  timestamp?: Date | string;
+  timestamp?: Date | string | number;
   /** Marks the record as synthetic/demo data (always true in this build) */
   synthetic?: boolean;
   className?: string;
