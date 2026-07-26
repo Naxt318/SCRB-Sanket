@@ -21,6 +21,8 @@ import {
   BarChart2
 } from 'lucide-react';
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid, LineChart, Line } from 'recharts';
+import jsPDF from 'jspdf';
+import html2canvas from 'html2canvas';
 
 // Sarvam AI speech-to-text (set VITE_SARVAM_API_KEY in your .env)
 const SARVAM_API_KEY = import.meta.env.VITE_SARVAM_API_KEY as string | undefined;
@@ -31,6 +33,7 @@ export default function Chat() {
   const [language, setLanguage] = useState<ChatMessageInputLanguage>('english');
   const [isListening, setIsListening] = useState(false);
   const [isTranscribing, setIsTranscribing] = useState(false);
+  const [isExporting, setIsExporting] = useState(false);
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const audioChunksRef = useRef<Blob[]>([]);
   const scrollRef = useRef<HTMLDivElement>(null);
@@ -153,9 +156,53 @@ export default function Chat() {
     }
   };
 
-  const exportPDF = () => {
-    // In a real app, use html2canvas + jspdf here on the chat container
-    alert("Export PDF triggered. (Demo)");
+  const exportPDF = async () => {
+    const el = scrollRef.current;
+    if (!el || !history || history.length === 0) {
+      alert('No conversation to export yet — ask a question first.');
+      return;
+    }
+
+    setIsExporting(true);
+    try {
+      const canvas = await html2canvas(el, {
+        backgroundColor: '#0a0e14',
+        height: el.scrollHeight,
+        width: el.scrollWidth,
+        windowWidth: el.scrollWidth,
+        windowHeight: el.scrollHeight,
+        useCORS: true,
+        scale: 2,
+      });
+
+      const imgData = canvas.toDataURL('image/png');
+      const pdf = new jsPDF('p', 'mm', 'a4');
+      const pageWidth = pdf.internal.pageSize.getWidth();
+      const pageHeight = pdf.internal.pageSize.getHeight();
+      const imgWidth = pageWidth;
+      const imgHeight = (canvas.height * imgWidth) / canvas.width;
+
+      let heightLeft = imgHeight;
+      let position = 0;
+
+      pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
+      heightLeft -= pageHeight;
+
+      while (heightLeft > 0) {
+        position = heightLeft - imgHeight;
+        pdf.addPage();
+        pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
+        heightLeft -= pageHeight;
+      }
+
+      const stamp = new Date().toISOString().slice(0, 19).replace(/[:T]/g, '-');
+      pdf.save(`SANKET-chat-export-${stamp}.pdf`);
+    } catch (err) {
+      console.error('[SANKET] PDF export failed', err);
+      alert('Failed to export chat as PDF. Please try again.');
+    } finally {
+      setIsExporting(false);
+    }
   };
 
   return (
@@ -171,9 +218,9 @@ export default function Chat() {
             <Languages className="w-3 h-3 mr-1" />
             {language === 'english' ? 'ENG' : 'KAN'}
           </Button>
-          <Button variant="outline" size="sm" onClick={exportPDF} className="text-xs h-8 px-2 border-border/50 hover:bg-muted">
+          <Button variant="outline" size="sm" onClick={exportPDF} disabled={isExporting} className="text-xs h-8 px-2 border-border/50 hover:bg-muted">
             <FileDown className="w-3 h-3 mr-1" />
-            Export
+            {isExporting ? 'Exporting...' : 'Export'}
           </Button>
           <Button variant="outline" size="sm" onClick={handleClear} className="text-xs h-8 px-2 border-border/50 hover:text-destructive hover:bg-destructive/10">
             <Trash2 className="w-3 h-3 mr-1" />
