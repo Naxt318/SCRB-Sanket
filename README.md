@@ -1,14 +1,14 @@
 <div align="center">
 
-<img src="./attached_assets/karnataka-emblem.png" width="90" alt="Karnataka State Emblem">
+<img src="./attached_assets/karnataka-emblem.png" width="100" alt="Karnataka State Emblem">
 
-<br>
+<br><br>
 
-# 🛡️ SCRB Sanket
+# 🛡️ S C R B &nbsp; S A N K E T
 
-### *Ask your crime data a question. Get back the answer — and the trail that proves it.*
+<h3><i>Ask your crime data a question.<br>Get back the answer — and the trail that proves it.</i></h3>
 
-**AI-powered conversational crime intelligence for the Karnataka State Crime Records Bureau**
+<p><b>AI-powered conversational crime intelligence for the Karnataka State Crime Records Bureau</b></p>
 
 <br>
 
@@ -27,17 +27,41 @@
   <img alt="catalyst" src="https://img.shields.io/badge/Zoho_Catalyst-Hosting-D2131A?style=flat-square&logo=zoho&logoColor=white">
   <img alt="tailwind" src="https://img.shields.io/badge/Tailwind_CSS-4-06B6D4?style=flat-square&logo=tailwindcss&logoColor=white">
   <img alt="gemini" src="https://img.shields.io/badge/Gemini-AI%20answers-8E75B2?style=flat-square&logo=googlegemini&logoColor=white">
+  <img alt="sarvam" src="https://img.shields.io/badge/Sarvam_AI-Voice-orange?style=flat-square">
   <img alt="pnpm" src="https://img.shields.io/badge/pnpm-workspaces-F69220?style=flat-square&logo=pnpm&logoColor=white">
 </p>
 
 <br>
 
-> ⚠️ **Demo environment — synthetic data only, no real case records.**
+</div>
+
+> [!WARNING]
+> **Demo environment — synthetic data only, no real case records.**
 > Nothing in this repo touches real CCTNS/SCRB data, real names, logos, signs or real ongoing investigations.
+
+<div align="center">
 
 <br>
 
-### 🔗 [**Live Demo**](https://scrb-sanket-60080213548.development.catalystserverless.in/app/) &nbsp;&nbsp;·&nbsp;&nbsp; 💻 [**GitHub Repo**](https://github.com/Naxt318/SCRB-Sanket) &nbsp;&nbsp;·&nbsp;&nbsp; 🔑 [**Demo Credentials**](./Credentials.md)
+### 🔗 [**LIVE DEMO**](https://scrb-sanket-60080213548.development.catalystserverless.in/app/) &nbsp;&nbsp;·&nbsp;&nbsp; 💻 [**GITHUB REPO**](https://github.com/Naxt318/SCRB-Sanket) &nbsp;&nbsp;·&nbsp;&nbsp; 🔑 [**DEMO CREDENTIALS**](./Credentials.md)
+
+<br>
+
+╔═══════════════════════════════════════════════════════════════╗
+
+**"Show me chain snatching cases in Bengaluru, last 3 months"**
+*→ instant answer, chart, and a full reasoning trail*
+
+╚═══════════════════════════════════════════════════════════════╝
+
+</div>
+
+<br>
+
+<div align="center">
+
+| 🏙️ 5 Districts | 🚨 10 Crime Types | 🕸️ Network Graphs | 🔐 3 Access Roles | 🎙️ Voice Input |
+|:---:|:---:|:---:|:---:|:---:|
 
 </div>
 
@@ -81,33 +105,29 @@
 
 > Investigators across Karnataka's **1,100+ police stations** currently rely on static dashboards to make sense of crime data.
 
-**SCRB Sanket** is a prototype of what that workflow could look like instead: ask a question in plain language, and get back a structured answer with the chart, map, or network graph that actually explains it — plus a visible trail of *how* the system got there.
+**SCRB Sanket** *(ಸಂಕೇತ — "signal" / "code")* is a prototype of what that workflow could look like instead: ask a question in plain language, and get back a structured answer with the chart, map, or network graph that actually explains it — plus a visible trail of *how* the system got there.
+
+<br>
 
 <table>
 <tr>
 <td width="33%" align="center" valign="top">
-
-### 🎙️
-**Ask naturally**
-<br>
-*"Chain snatching cases in Bengaluru, last 3 months?"*
-
+<h3>🎙️</h3>
+<b>Ask naturally</b>
+<br><br>
+<i>"Chain snatching cases in Bengaluru, last 3 months?"</i>
 </td>
 <td width="33%" align="center" valign="top">
-
-### 🧠
-**Reasoned, not guessed**
-<br>
+<h3>🧠</h3>
+<b>Reasoned, not guessed</b>
+<br><br>
 Every answer is grounded in the dataset first, then explained step by step
-
 </td>
 <td width="33%" align="center" valign="top">
-
-### 🔐
-**Built for a command center**
-<br>
+<h3>🔐</h3>
+<b>Built for a command center</b>
+<br><br>
 Role-gated, audit-logged, and demoed safely on synthetic data
-
 </td>
 </tr>
 </table>
@@ -165,7 +185,7 @@ Role-gated, audit-logged, and demoed safely on synthetic data
 
 <div align="center">
 
-**All data is 100% synthetic** — generated FIR-style records with zero connection to real cases, investigations, or people.
+**🧪 All data is 100% synthetic** — generated FIR-style records with zero connection to real cases, investigations, or people.
 
 </div>
 
@@ -179,7 +199,8 @@ Role-gated, audit-logged, and demoed safely on synthetic data
 
 <br>
 
-> 💡 The chat engine grounds every answer in this synthetic dataset first — filtering and reasoning over it deterministically — then uses **Google Gemini** (free tier) to phrase the final natural-language response, falling back to a rule-based answer automatically if the AI call is unavailable.
+> [!TIP]
+> The chat engine grounds every answer in this synthetic dataset first — filtering and reasoning over it deterministically — then uses **Google Gemini** (free tier) to phrase the final natural-language response, falling back to a rule-based answer automatically if the AI call is unavailable.
 
 <br>
 
@@ -224,11 +245,23 @@ flowchart LR
 
 <div align="center">
 
-**🚫 No backend server. No Cloud Function. No database.**
+### 🚫 No backend server &nbsp;·&nbsp; 🚫 No Cloud Function &nbsp;·&nbsp; 🚫 No database
 
 </div>
 
+<br>
+
 Every `/api/*` call is answered inside the browser by `src/local-api/`. The only external calls are to Firebase (auth), Google Gemini (chat answers), and Sarvam AI (voice transcription) — all reachable directly from the browser, which is why this can run entirely on free tiers.
+
+<br>
+
+<details>
+<summary><b>🔍 Why build it this way?</b></summary>
+<br>
+
+A real deployment behind SCRB's own infrastructure would obviously sit behind a proper backend and a real database. For a hackathon prototype, though, every extra moving part is one more thing that can go wrong on demo day — so the "backend" here is just deterministic TypeScript running in the visitor's own browser, backed by a synthetic dataset. Zero infra to keep alive, zero hosting cost, and the exact same user-facing behavior a real backend would produce.
+
+</details>
 
 <br>
 
@@ -257,7 +290,7 @@ Every `/api/*` call is answered inside the browser by `src/local-api/`. The only
 
 <div align="center">
 
-### **[▶️ Try the live demo](https://scrb-sanket-60080213548.development.catalystserverless.in/app/)**
+### **[▶️ TRY THE LIVE DEMO](https://scrb-sanket-60080213548.development.catalystserverless.in/app/)**
 
 📘 See **[`Credentials.md`](./Credentials.md)** for demo login ID and password.
 
@@ -327,8 +360,12 @@ A persistent in-app banner marks this as a demo environment running on synthetic
 
 <br>
 
-*Built as a prototype — official, trustworthy, command-center feel.* 🛡️
+### *Built as a prototype — official, trustworthy, command-center feel.* 🛡️
 
-<sub>Made for the Karnataka State Crime Records Bureau · Synthetic data only</sub>
+<sub>Made for the Karnataka State Crime Records Bureau &nbsp;·&nbsp; Synthetic data only &nbsp;·&nbsp; MIT Licensed</sub>
+
+<br><br>
+
+<img alt="footer" src="https://img.shields.io/badge/⬆️_back_to_top-grey?style=flat-square">
 
 </div>
