@@ -4,11 +4,18 @@ import { useAuth } from '@/contexts/AuthContext';
 import { 
   ShieldAlert, 
   LayoutDashboard, 
+  Search as SearchIcon,
+  GitCompare,
+  Fingerprint,
+  AlertTriangle,
+  Activity,
   MessageSquare, 
   Map as MapIcon, 
   Network, 
   TrendingUp, 
+  Briefcase,
   FileText, 
+  Building2,
   Info,
   LogOut,
   User,
@@ -23,14 +30,22 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
 
   const navItems = [
     { href: '/dashboard', icon: LayoutDashboard, label: 'Dashboard' },
-    { href: '/chat', icon: MessageSquare, label: 'AI Query' },
+    { href: '/search', icon: SearchIcon, label: 'Intelligence Search' },
+    { href: '/correlations', icon: GitCompare, label: 'Case Correlations' },
+    { href: '/mo-intelligence', icon: Fingerprint, label: 'MO Intelligence' },
+    { href: '/alerts', icon: AlertTriangle, label: 'Early Warnings' },
+    { href: '/risk-analysis', icon: Activity, label: 'Risk Scoring' },
     { href: '/map', icon: MapIcon, label: 'Hotspot Map' },
+    { href: '/workspace', icon: Briefcase, label: 'Workspace' },
+    { href: '/chat', icon: MessageSquare, label: 'Grounded AI' },
+    { href: '/reports', icon: FileText, label: 'Intelligence Briefs' },
+    { href: '/socioeconomic', icon: Building2, label: 'Socioeconomic' },
     { href: '/trends', icon: TrendingUp, label: 'Trends' },
     { href: '/how-it-works', icon: Info, label: 'System Info' },
   ];
 
   if (user?.role === 'supervisor' || user?.role === 'admin') {
-    navItems.splice(3, 0, { href: '/network', icon: Network, label: 'Network' });
+    navItems.splice(6, 0, { href: '/network', icon: Network, label: 'Network' });
     navItems.push({ href: '/audit', icon: FileText, label: 'Audit Logs' });
   }
 

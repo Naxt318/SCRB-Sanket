@@ -51,3 +51,9 @@ Thumbs.db
 # local env files
 .env
 .env.local
+
+# Prisma generated artifacts
+server/src/generated
+server/prisma/src/generated
+*.node
+*.tmp*

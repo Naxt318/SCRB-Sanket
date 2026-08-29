@@ -6,8 +6,7 @@ import { localApiHandler } from './local-api/router';
 
 import './index.css';
 
-// No backend server: every "/api/*" call is answered right here in the
-// browser (see src/local-api/). Works on Firebase's free Spark plan.
-setLocalHandler(localApiHandler);
+// Backend server connected: "/api/*" calls are proxied to Express backend.
+// setLocalHandler(localApiHandler);
 
 createRoot(document.getElementById('root')!).render(<App />);

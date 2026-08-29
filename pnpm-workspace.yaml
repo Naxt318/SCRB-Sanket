@@ -39,6 +39,7 @@ packages:
   - lib/*
   - lib/integrations/*
   - scripts
+  - server
 
 catalog:
   '@replit/vite-plugin-cartographer': ^0.5.21
@@ -138,6 +139,9 @@ overrides:
 
 allowBuilds:
   '@firebase/util': true
+  '@prisma/client': true
+  '@prisma/engines': true
   core-js: true
   esbuild: true
+  prisma: true
   protobufjs: true

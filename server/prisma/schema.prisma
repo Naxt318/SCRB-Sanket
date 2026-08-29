@@ -1,0 +1,175 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../src/generated/client"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Fir {
+  id              String      @id
+  firNumber       String      @unique
+  district        String
+  policeStation   String
+  crimeType       String
+  subType         String
+  dateOfIncident  String
+  timeOfIncident  String
+  status          String
+  latitude        Float
+  longitude       Float
+  description     String
+  isSynthetic     Boolean     @default(true)
+  createdAt       DateTime    @default(now())
+  updatedAt       DateTime    @updatedAt
+
+  persons         FirPerson[]
+  investigations  InvestigationFir[]
+
+  @@index([district])
+  @@index([crimeType])
+  @@index([dateOfIncident])
+  @@index([status])
+  @@index([district, crimeType])
+  @@index([district, dateOfIncident])
+  @@index([crimeType, dateOfIncident])
+}
+
+model Person {
+  id              String      @id
+  alias           String
+  district        String
+  group           Int
+  crimeTypes      String[]
+
+  firs            FirPerson[]
+  investigations  InvestigationPerson[]
+}
+
+model FirPerson {
+  firId           String
+  personId        String
+
+  fir             Fir         @relation(fields: [firId], references: [id], onDelete: Cascade)
+  person          Person      @relation(fields: [personId], references: [id], onDelete: Cascade)
+
+  @@id([firId, personId])
+  @@index([firId])
+  @@index([personId])
+}
+
+model AuditLog {
+  id              String      @id @default(uuid())
+  userId          String
+  userName        String
+  role            String
+  query           String
+  timestamp       String
+  resultsCount    Int
+  ipAddress       String
+  createdAt       DateTime    @default(now())
+
+  @@index([timestamp])
+  @@index([userId])
+}
+
+model User {
+  id           String   @id @default(uuid())
+  email        String   @unique
+  name         String
+  role         String
+  district     String
+  badgeNumber  String
+  passwordHash String
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  chatSessions ChatSession[]
+}
+
+model ChatSession {
+  id        String        @id @default(uuid())
+  userId    String
+  title     String        @default("New Intelligence Query")
+  createdAt DateTime      @default(now())
+  updatedAt DateTime      @updatedAt
+
+  user      User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  messages  ChatMessage[]
+}
+
+model ChatMessage {
+  id        String      @id @default(uuid())
+  sessionId String
+  role      String
+  content   String
+  reasoning String[]
+  sources   String[]
+  createdAt DateTime    @default(now())
+
+  session   ChatSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+}
+
+model Investigation {
+  id          String                 @id @default(uuid())
+  title       String
+  description String
+  status      String                 @default("active")
+  assignedTo  String
+  district    String
+  createdAt   DateTime               @default(now())
+  updatedAt   DateTime               @updatedAt
+
+  firs        InvestigationFir[]
+  persons     InvestigationPerson[]
+  findings    InvestigationFinding[]
+}
+
+model InvestigationFir {
+  investigationId String
+  firId           String
+  addedAt         DateTime      @default(now())
+
+  investigation   Investigation @relation(fields: [investigationId], references: [id], onDelete: Cascade)
+  fir             Fir           @relation(fields: [firId], references: [id], onDelete: Cascade)
+
+  @@id([investigationId, firId])
+}
+
+model InvestigationPerson {
+  investigationId String
+  personId        String
+  addedAt         DateTime      @default(now())
+
+  investigation   Investigation @relation(fields: [investigationId], references: [id], onDelete: Cascade)
+  person          Person        @relation(fields: [personId], references: [id], onDelete: Cascade)
+
+  @@id([investigationId, personId])
+}
+
+model InvestigationFinding {
+  id              String        @id @default(uuid())
+  investigationId String
+  title           String
+  findingType     String
+  content         String
+  confidence      Float         @default(0.85)
+  createdAt       DateTime      @default(now())
+
+  investigation   Investigation @relation(fields: [investigationId], references: [id], onDelete: Cascade)
+}
+
+model SocioeconomicData {
+  id                String   @id @default(uuid())
+  district          String   @unique
+  population        Int
+  populationDensity Float
+  urbanizationRate  Float
+  unemploymentRate  Float
+  literacyRate      Float
+  updatedAt         DateTime @updatedAt
+}
+
+

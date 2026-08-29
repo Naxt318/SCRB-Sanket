@@ -15,11 +15,21 @@ import AuditLogs from '@/pages/audit';
 import HowItWorks from '@/pages/how-it-works';
 import NotFound from '@/pages/not-found';
 
+import IntelligenceSearch from '@/pages/search';
+import CaseCorrelation from '@/pages/correlation';
+import MOIntelligence from '@/pages/mo-intelligence';
+import AnomalyAlerts from '@/pages/alerts';
+import ExplainableRisk from '@/pages/risk-analysis';
+import InvestigationWorkspace from '@/pages/workspace';
+import IntelligenceBriefs from '@/pages/reports';
+import SocioeconomicAnalysis from '@/pages/socioeconomic';
+
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
       retry: 1,
       refetchOnWindowFocus: false,
+      staleTime: 30000,
     },
   },
 });
@@ -73,8 +83,32 @@ function Router() {
       <Route path="/dashboard">
         <ProtectedRoute component={Dashboard} />
       </Route>
+      <Route path="/search">
+        <ProtectedRoute component={IntelligenceSearch} />
+      </Route>
+      <Route path="/correlations">
+        <ProtectedRoute component={CaseCorrelation} />
+      </Route>
+      <Route path="/mo-intelligence">
+        <ProtectedRoute component={MOIntelligence} />
+      </Route>
+      <Route path="/alerts">
+        <ProtectedRoute component={AnomalyAlerts} />
+      </Route>
+      <Route path="/risk-analysis">
+        <ProtectedRoute component={ExplainableRisk} />
+      </Route>
+      <Route path="/workspace">
+        <ProtectedRoute component={InvestigationWorkspace} />
+      </Route>
       <Route path="/chat">
         <ProtectedRoute component={Chat} />
+      </Route>
+      <Route path="/reports">
+        <ProtectedRoute component={IntelligenceBriefs} />
+      </Route>
+      <Route path="/socioeconomic">
+        <ProtectedRoute component={SocioeconomicAnalysis} />
       </Route>
       <Route path="/map">
         <ProtectedRoute component={HotspotMap} />
@@ -100,10 +134,14 @@ function Router() {
 }
 
 function App() {
+  const baseUrl = import.meta.env.BASE_URL && import.meta.env.BASE_URL !== '/' 
+    ? import.meta.env.BASE_URL.replace(/\/$/, '') 
+    : undefined;
+
   return (
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>
-        <WouterRouter base="/app">
+        <WouterRouter base={baseUrl}>
           <AuthProvider>
             <Router />
           </AuthProvider>

@@ -7,7 +7,9 @@
     "build": "pnpm run typecheck && pnpm -r --if-present run build",
     "typecheck:libs": "tsc --build",
     "typecheck": "pnpm run typecheck:libs && pnpm -r --filter \"./artifacts/**\" --filter \"./scripts\" --if-present run typecheck",
-    "dev": "pnpm --filter @workspace/scrb-sanket run dev"
+    "dev": "pnpm --filter @workspace/scrb-sanket run dev",
+    "dev:server": "pnpm --filter server run dev",
+    "dev:all": "pnpm --parallel --filter server --filter @workspace/scrb-sanket run dev"
   },
   "private": true,
   "dependencies": {

@@ -1,13 +1,10 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import {
-  onAuthStateChanged,
-  signInWithEmailAndPassword,
-  signOut as firebaseSignOut,
-  type User as FirebaseUser,
-} from 'firebase/auth';
-import { User, getMe } from '@workspace/api-client-react';
+import { User, getMe, setAuthTokenGetter } from '@workspace/api-client-react';
 import { useLocation } from 'wouter';
-import { auth } from '@/lib/firebase';
+
+setAuthTokenGetter(() => {
+  return localStorage.getItem('scrb_auth_token');
+});
 
 interface AuthContextType {
   user: User | null;
@@ -25,37 +22,57 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [, setLocation] = useLocation();
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, async (firebaseUser: FirebaseUser | null) => {
-      if (!firebaseUser) {
+    async function loadUser() {
+      const token = localStorage.getItem('scrb_auth_token');
+      if (!token) {
         setUser(null);
         setLoading(false);
         return;
       }
 
       try {
-        // Looks up this signed-in email's SCRB profile (role, district,
-        // badge number) locally — see src/local-api/router.ts.
         const profile = await getMe();
         setUser(profile);
       } catch {
-        // Signed in with Firebase but not a provisioned SCRB account.
+        localStorage.removeItem('scrb_auth_token');
         setUser(null);
-        await firebaseSignOut(auth);
       } finally {
         setLoading(false);
       }
-    });
+    }
 
-    return unsubscribe;
+    loadUser();
   }, []);
 
   const login = async (email: string, password: string) => {
-    await signInWithEmailAndPassword(auth, email, password);
-    // onAuthStateChanged above picks up the new session and loads the profile.
+    const response = await fetch('/api/auth/login', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, password }),
+    });
+
+    if (!response.ok) {
+      const data = await response.json().catch(() => ({}));
+      throw new Error(data.error || 'Invalid email or password');
+    }
+
+    const data = await response.json();
+    if (data.token) {
+      localStorage.setItem('scrb_auth_token', data.token);
+    }
+    if (data.user) {
+      setUser(data.user);
+    } else {
+      const profile = await getMe();
+      setUser(profile);
+    }
+    setLocation('/dashboard');
   };
 
   const logout = async () => {
-    await firebaseSignOut(auth);
+    await fetch('/api/auth/logout', { method: 'POST' }).catch(() => {});
+    localStorage.removeItem('scrb_auth_token');
+    setUser(null);
     setLocation('/login');
   };
 
