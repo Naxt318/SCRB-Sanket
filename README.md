@@ -2,7 +2,7 @@
 
 <img src="./docs/assets/karnataka-state-emblem.png" alt="Karnataka State Emblem" width="190" />
 
-# SANKET
+# SCRB-Sanket
 
 ### AI Crime Intelligence Command Center
 
@@ -28,13 +28,13 @@
 
 Crime data is rarely valuable merely because it exists. Its operational value appears when analysts can connect incidents across place, time, people, modus operandi, and socioeconomic context—and explain why a signal deserves attention.
 
-**SANKET** is a full-stack crime-intelligence prototype designed around that goal. It brings search, geospatial analysis, temporal trends, relationship discovery, anomaly detection, explainable risk scoring, investigation workspaces, and evidence-grounded reporting into one role-aware command center.
+**SCRB-Sanket** is a full-stack crime-intelligence prototype designed around that goal. It brings search, geospatial analysis, temporal trends, relationship discovery, anomaly detection, explainable risk scoring, investigation workspaces, and evidence-grounded reporting into one role-aware command center.
 
 The prototype is deliberately built with **synthetic demonstration data**. It shows the workflow and analytical possibilities without exposing real citizens, victims, suspects, FIRs, or operational police data.
 
-## Why SANKET
+## Why SCRB-Sanket
 
-| Challenge | SANKET response |
+| Challenge | SCRB-Sanket response |
 |---|---|
 | Records are spread across views and systems | One searchable intelligence workspace |
 | Patterns are difficult to see in tabular data | Maps, trends, graphs, correlations, and MO profiles |
@@ -202,7 +202,7 @@ pnpm --filter server db:seed
 
 ## 📦 Production deployment
 
-SANKET ships as a single deployable service.
+SCRB-Sanket ships as a single deployable service.
 
 ```bash
 pnpm install --frozen-lockfile
@@ -256,7 +256,7 @@ Protected endpoints require a bearer token. Supervisory screens additionally enf
 ## Trust, safety, and responsible use
 
 > [!IMPORTANT]
-> SANKET is a Datathon prototype, not a production policing system.
+> SCRB-Sanket is a Datathon prototype, not a production policing system.
 
 - Every included incident and person is **synthetic**.
 - The application must not be used to infer guilt, predict individual criminality, or make automated enforcement decisions.
@@ -267,7 +267,7 @@ Protected endpoints require a bearer token. Supervisory screens additionally enf
 
 ## Datathon recognition
 
-SANKET was built for **Datathon 2026** and shortlisted for its next evaluation phase. The project demonstrates how an explainable, analyst-centered interface can bring together multiple crime-intelligence workflows while remaining transparent about data provenance and limitations.
+SCRB-Sanket was built for **Datathon 2026** and shortlisted for its next evaluation phase. The project demonstrates how an explainable, analyst-centered interface can bring together multiple crime-intelligence workflows while remaining transparent about data provenance and limitations.
 
 ## Team
 
@@ -277,7 +277,7 @@ Built by **Nanak Tekchandani and team** for Karnataka State Police × Hack2skill
 
 <div align="center">
 
-### संकेत · SANKET
+### संकेत · SCRB-Sanket
 
 **From records to signals. From signals to responsible action.**
 
