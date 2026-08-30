@@ -17,7 +17,7 @@ export default defineConfig(async ({ mode }) => {
     throw new Error(`Invalid PORT value: "${rawPort}"`);
   }
 
-  const basePath = env.BASE_PATH ?? (mode === 'production' ? '/app' : '/');
+  const basePath = env.BASE_PATH ?? '/';
 
   return {
     base: basePath,

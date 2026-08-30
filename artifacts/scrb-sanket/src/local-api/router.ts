@@ -12,7 +12,6 @@
 // changed, not the behavior.
 
 import type { LocalHandler, LocalHandlerResult } from "@workspace/api-client-react";
-import { auth } from "@/lib/firebase";
 import { getFirs, getPersons, DISTRICTS, CRIME_TYPES } from "./synthetic-firs";
 import { processQueryWithAI } from "./chat-engine";
 import { sessionStore } from "./session-store";
@@ -23,11 +22,23 @@ function json(status: number, data: unknown) {
 }
 
 function currentUser() {
-  const fb = auth.currentUser;
-  if (!fb?.email) return null;
-  const profile = profileForEmail(fb.email);
-  if (!profile) return null;
-  return { uid: fb.uid, email: fb.email, ...profile };
+  const token = localStorage.getItem("scrb_auth_token");
+  if (!token) return null;
+
+  try {
+    const payload = JSON.parse(atob(token.split(".")[1] ?? "")) as {
+      userId?: string;
+      email?: string;
+    };
+    if (!payload.email) return null;
+
+    const profile = profileForEmail(payload.email);
+    if (!profile) return null;
+
+    return { uid: payload.userId ?? payload.email, email: payload.email, ...profile };
+  } catch {
+    return null;
+  }
 }
 
 function fixedNow() {

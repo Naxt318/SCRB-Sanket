@@ -1,6 +1,8 @@
 import express, { Request, Response, NextFunction } from "express";
 import cors from "cors";
 import dotenv from "dotenv";
+import path from "node:path";
+import fs from "node:fs";
 import routes from "./routes/api.routes.js";
 
 import { apiTimingMiddleware } from "./middleware/timing.middleware.js";
@@ -13,11 +15,18 @@ app.use(cors());
 app.use(express.json());
 app.use(apiTimingMiddleware);
 
-app.get("/", (_req, res) => {
-  res.json({ name: "SCRB-Sanket Express API Server", status: "ok", health: "/health" });
-});
-
 app.use(routes);
+
+const clientDist = path.resolve(import.meta.dirname, "../../artifacts/scrb-sanket/dist/public");
+
+if (fs.existsSync(clientDist)) {
+  app.use(express.static(clientDist));
+  app.get("*", (_req, res) => res.sendFile(path.join(clientDist, "index.html")));
+} else {
+  app.get("/", (_req, res) => {
+    res.json({ name: "SCRB-Sanket Express API Server", status: "ok", health: "/health" });
+  });
+}
 
 // Central error handler
 app.use((err: any, _req: Request, res: Response, _next: NextFunction) => {
