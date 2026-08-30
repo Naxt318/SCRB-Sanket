@@ -11,7 +11,7 @@ import { getModusOperandiIntelligence } from "../services/mo.service.js";
 import { getAnomalies } from "../services/anomaly.service.js";
 import { getRiskScoring } from "../services/risk.service.js";
 import { searchIntelligence } from "../services/search.service.js";
-import { processGroundedAIQuery } from "../services/ai.service.js";
+import { processAIQuery, processGroundedAIQuery } from "../services/ai.service.js";
 import { getInvestigations, createInvestigation } from "../services/workspace.service.js";
 import { generateIntelligenceReport } from "../services/report.service.js";
 import { getSocioeconomicContext } from "../services/socioeconomic.service.js";
@@ -716,14 +716,9 @@ export async function handleChat(req: AuthenticatedRequest, res: Response): Prom
 
   const responseId = crypto.randomUUID();
   const timestamp = new Date().toISOString();
-  const answer = `**Analysis over ${firs.length} matching FIR records in database**:
-Processed query: "${message}".
-
-- Total FIRs analyzed: **${firs.length}**
-- Open/Active cases: **${firs.filter((f: any) => f.status === "registered" || f.status === "under_investigation").length}**
-- Data engine: **Express Backend Engine Active**
-
-*Note: Phase 2 backend engine active. Gemini AI integration is deferred to Phase 3.*`;
+  const priorMessages = history.map((entry: any) => ({ role: entry.role, content: entry.content }));
+  const intelligence = await processAIQuery(message, req.user?.uid, priorMessages);
+  const answer = intelligence.answer;
 
   const assistantMsg = {
     id: responseId,
@@ -732,8 +727,9 @@ Processed query: "${message}".
     content: answer,
     language,
     timestamp,
-    reasoning: ["Parsed request in Express backend.", "Queried data engine."],
-    sources: ["SCRB FIR Database"],
+    reasoning: intelligence.reasoning,
+    sources: intelligence.sources,
+    aiPowered: intelligence.aiPowered,
   };
 
   history.push(assistantMsg);
@@ -780,6 +776,7 @@ Processed query: "${message}".
     chartData: null,
     mapData,
     firIds: firs.map((f: any) => f.id),
+    aiPowered: intelligence.aiPowered,
   });
 }
 

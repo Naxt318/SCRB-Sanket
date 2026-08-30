@@ -7,6 +7,81 @@ export interface GroundedAIResponse {
   reasoning: string[];
   sources: string[];
   citedFirIds: string[];
+  aiPowered?: boolean;
+}
+
+const GEMINI_MODELS = ["gemini-2.5-flash", "gemini-2.5-flash-lite"];
+
+async function enhanceWithGemini(
+  message: string,
+  grounded: GroundedAIResponse,
+  history: Array<{ role: string; content: string }> = [],
+): Promise<GroundedAIResponse> {
+  const apiKey = process.env.GEMINI_API_KEY?.trim();
+  if (!apiKey) return { ...grounded, aiPowered: false };
+
+  const recentContext = history
+    .slice(-6)
+    .map((entry) => `${entry.role === "user" ? "Investigator" : "SANKET"}: ${entry.content}`)
+    .join("\n");
+  const prompt = `You are SANKET, a Karnataka SCRB crime-intelligence assistant.
+Rewrite the grounded draft below into a concise, professional analyst briefing.
+
+Rules:
+- The dataset is synthetic demonstration data. State that clearly.
+- Preserve every number, FIR identifier, and factual conclusion from the draft.
+- Never invent people, cases, evidence, statistics, or operational recommendations.
+- Use clear Markdown and answer the investigator's question directly.
+- End by saying that a human investigator must verify findings before action.
+
+${recentContext ? `Recent conversation:\n${recentContext}\n\n` : ""}Investigator question: ${message}
+
+Grounded draft:
+${grounded.answer}`;
+
+  for (const model of GEMINI_MODELS) {
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 12_000);
+    try {
+      const response = await fetch(
+        `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "x-goog-api-key": apiKey,
+          },
+          body: JSON.stringify({
+            contents: [{ parts: [{ text: prompt }] }],
+            generationConfig: { temperature: 0.15, maxOutputTokens: 900 },
+          }),
+          signal: controller.signal,
+        },
+      );
+
+      if (!response.ok) continue;
+      const payload = await response.json() as any;
+      const text = payload?.candidates?.[0]?.content?.parts
+        ?.map((part: any) => part?.text ?? "")
+        .join("")
+        .trim();
+      if (!text) continue;
+
+      return {
+        ...grounded,
+        answer: text,
+        reasoning: [...grounded.reasoning, "Gemini refined the grounded response without changing the cited evidence."],
+        sources: [...grounded.sources, `Language model: Google Gemini (${model})`],
+        aiPowered: true,
+      };
+    } catch {
+      // Try the next model, then retain the grounded deterministic answer.
+    } finally {
+      clearTimeout(timeout);
+    }
+  }
+
+  return { ...grounded, aiPowered: false };
 }
 
 export async function processGroundedAIQuery(message: string, userId?: string): Promise<GroundedAIResponse> {
@@ -115,4 +190,13 @@ ${relevantFirs.slice(0, 4).map((f) => `- **${f.id}** (${f.firNumber}): ${f.crime
     sources,
     citedFirIds,
   };
+}
+
+export async function processAIQuery(
+  message: string,
+  userId?: string,
+  history: Array<{ role: string; content: string }> = [],
+): Promise<GroundedAIResponse> {
+  const grounded = await processGroundedAIQuery(message, userId);
+  return enhanceWithGemini(message, grounded, history);
 }
