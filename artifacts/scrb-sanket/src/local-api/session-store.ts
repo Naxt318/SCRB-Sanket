@@ -28,7 +28,30 @@ export interface AuditEntry {
 
 class SessionStore {
   private sessions: Map<string, ChatMessage[]> = new Map();
-  private auditLog: AuditEntry[] = [];
+  private readonly auditKey = "scrb_sanket_audit_log";
+  private auditLog: AuditEntry[] = this.loadAuditLog();
+
+  private loadAuditLog(): AuditEntry[] {
+    try {
+      const stored = JSON.parse(localStorage.getItem(this.auditKey) ?? "null") as AuditEntry[] | null;
+      if (stored?.length) return stored;
+    } catch {
+      // Fall through to synthetic demonstration entries.
+    }
+    return [
+      { id: "AUD-DEMO-001", userId: "usr-supervisor", userName: "DSP M. Nair", role: "supervisor", query: "Reviewed Bengaluru Urban chain-snatching early warning", timestamp: "2026-07-24T09:42:00.000Z", resultsCount: 19, ipAddress: "demo-local" },
+      { id: "AUD-DEMO-002", userId: "usr-investigator", userName: "Insp. R. Kumar", role: "investigator", query: "Searched recurring late-night burglary MO patterns", timestamp: "2026-07-24T08:17:00.000Z", resultsCount: 12, ipAddress: "demo-local" },
+      { id: "AUD-DEMO-003", userId: "usr-admin", userName: "SP J. Reddy", role: "admin", query: "Generated statewide explainable risk review", timestamp: "2026-07-23T16:05:00.000Z", resultsCount: 6, ipAddress: "demo-local" },
+    ];
+  }
+
+  private persistAuditLog(): void {
+    try {
+      localStorage.setItem(this.auditKey, JSON.stringify(this.auditLog));
+    } catch {
+      // Storage can be unavailable in hardened browser modes; memory still works.
+    }
+  }
 
   getHistory(sessionId: string): ChatMessage[] {
     return this.sessions.get(sessionId) ?? [];
@@ -52,6 +75,7 @@ class SessionStore {
     if (this.auditLog.length > 500) {
       this.auditLog = this.auditLog.slice(0, 500);
     }
+    this.persistAuditLog();
   }
 
   getAuditLog(limit = 50): AuditEntry[] {

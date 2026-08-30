@@ -131,7 +131,7 @@ export default function Login() {
           </CardFooter>
         </Card>
         <p className="text-center text-[10px] text-muted-foreground mt-4">
-          Every logo or any logo is for representation purpose only, no relation to real resemblance.
+          Datathon prototype · Synthetic data only · No real case or personal records
         </p>
       </div>
     </div>

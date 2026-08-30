@@ -51,6 +51,9 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
 
   return (
     <div className="min-h-screen bg-background text-foreground flex flex-col font-sans">
+      <a href="#main-content" className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-10 focus:z-[100] focus:rounded-md focus:bg-primary focus:px-4 focus:py-2 focus:text-primary-foreground">
+        Skip to intelligence content
+      </a>
       {/* Persistent Disclaimer Banner */}
       <div className="bg-primary/20 text-primary-foreground text-xs font-semibold py-1.5 px-4 text-center flex items-center justify-center gap-2 border-b border-primary/30 shrink-0 z-50 relative">
         <ShieldAlert className="w-4 h-4 text-secondary" />
@@ -77,7 +80,7 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
               const Icon = item.icon;
               const active = location === item.href;
               return (
-                <Link key={item.href} href={item.href} className={`flex items-center gap-3 px-3 py-2 rounded-sm transition-colors text-sm font-medium ${active ? 'bg-primary/20 text-secondary border border-primary/30' : 'text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground'}`}>
+                <Link key={item.href} href={item.href} aria-current={active ? 'page' : undefined} className={`flex items-center gap-3 px-3 py-2 rounded-sm transition-colors text-sm font-medium ${active ? 'bg-primary/20 text-secondary border border-primary/30' : 'text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground'}`}>
                   <Icon className="w-4 h-4" />
                   {item.label}
                 </Link>
@@ -105,7 +108,7 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
         {/* Mobile Header */}
         <div className="flex-1 flex flex-col min-w-0 overflow-hidden">
           <header className="h-14 bg-card border-b border-border flex items-center px-4 md:hidden shrink-0">
-            <Button variant="ghost" size="icon" className="mr-2" onClick={() => setMobileOpen(!mobileOpen)}>
+            <Button variant="ghost" size="icon" className="mr-2" aria-label={mobileOpen ? 'Close navigation menu' : 'Open navigation menu'} aria-expanded={mobileOpen} onClick={() => setMobileOpen(!mobileOpen)}>
               <Menu className="w-5 h-5" />
             </Button>
             <h1 className="font-bold text-sm text-primary-foreground uppercase tracking-widest">SCRB SANKET</h1>
@@ -123,17 +126,27 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
                   </Link>
                 );
               })}
+              <div className="mt-2 flex items-center justify-between gap-3 border-t border-sidebar-border pt-3">
+                <div className="min-w-0">
+                  <p className="truncate text-sm font-semibold text-foreground">{user?.name}</p>
+                  <p className="truncate text-xs capitalize text-muted-foreground">{user?.role} · {user?.district}</p>
+                </div>
+                <Button variant="outline" size="sm" onClick={logout} className="shrink-0 text-muted-foreground hover:text-destructive">
+                  <LogOut className="mr-1.5 h-4 w-4" />
+                  Sign Out
+                </Button>
+              </div>
             </div>
           )}
 
           {/* Main Content */}
-          <main className="flex-1 overflow-auto bg-background p-4 md:p-6 relative">
+          <main id="main-content" className="flex-1 overflow-auto bg-background p-4 md:p-6 relative">
             {children}
           </main>
 
           {/* Persistent Footer Disclaimer */}
           <footer className="shrink-0 text-center text-[10px] text-muted-foreground py-1.5 px-4 border-t border-border bg-card/50">
-            Every logo or any logo is for representation purpose only, no relation to real resemblance.
+            Datathon prototype · Synthetic data only · Human review required for every analytical output
           </footer>
         </div>
       </div>

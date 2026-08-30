@@ -16,6 +16,17 @@ import { getFirs, getPersons, DISTRICTS, CRIME_TYPES } from "./synthetic-firs";
 import { processQueryWithAI } from "./chat-engine";
 import { sessionStore } from "./session-store";
 import { profileForEmail } from "./demo-profiles";
+import {
+  createWorkspace,
+  generateReport,
+  getAnomalies,
+  getCorrelations,
+  getMoProfiles,
+  getRiskAssessments,
+  getSocioeconomic,
+  getWorkspaces,
+  searchIntelligence,
+} from "./advanced-intelligence";
 
 function json(status: number, data: unknown) {
   return { status, data };
@@ -544,6 +555,19 @@ const routes: Route[] = [
   { method: "GET", pattern: /^\/api\/audit\/log$/, handle: (p) => handleAuditLog(p) },
   { method: "GET", pattern: /^\/api\/meta\/districts$/, handle: () => json(200, DISTRICTS) },
   { method: "GET", pattern: /^\/api\/meta\/crime-types$/, handle: () => json(200, CRIME_TYPES) },
+  { method: "POST", pattern: /^\/api\/intelligence\/search$/, handle: (_p, body) => {
+    const query = String((body as Record<string, unknown> | undefined)?.query ?? "").trim();
+    return query ? json(200, searchIntelligence(query)) : json(400, { error: "query is required" });
+  } },
+  { method: "GET", pattern: /^\/api\/intelligence\/correlations$/, handle: (p) => json(200, getCorrelations(p)) },
+  { method: "GET", pattern: /^\/api\/intelligence\/mo$/, handle: (p) => json(200, getMoProfiles(p)) },
+  { method: "GET", pattern: /^\/api\/intelligence\/anomalies$/, handle: (p) => json(200, getAnomalies(p)) },
+  { method: "GET", pattern: /^\/api\/intelligence\/alerts$/, handle: (p) => json(200, { alerts: getAnomalies(p).anomalies }) },
+  { method: "GET", pattern: /^\/api\/intelligence\/risk$/, handle: (p) => json(200, getRiskAssessments(p)) },
+  { method: "GET", pattern: /^\/api\/intelligence\/workspace$/, handle: () => json(200, getWorkspaces()) },
+  { method: "POST", pattern: /^\/api\/intelligence\/workspace$/, handle: (_p, body) => json(201, createWorkspace((body ?? {}) as Record<string, unknown>)) },
+  { method: "POST", pattern: /^\/api\/intelligence\/report$/, handle: (_p, body) => json(200, generateReport((body ?? {}) as Record<string, unknown>)) },
+  { method: "GET", pattern: /^\/api\/intelligence\/socioeconomic$/, handle: (p) => json(200, getSocioeconomic(p)) },
 ];
 
 export const localApiHandler: LocalHandler = (url, init) => {

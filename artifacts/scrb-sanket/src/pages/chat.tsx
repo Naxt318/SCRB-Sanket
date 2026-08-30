@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useQueryClient } from '@tanstack/react-query';
+import { Link } from 'wouter';
 import {
   Send,
   Mic,
@@ -21,8 +22,6 @@ import {
   BarChart2
 } from 'lucide-react';
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid, LineChart, Line } from 'recharts';
-import jsPDF from 'jspdf';
-import html2canvas from 'html2canvas-pro';
 
 // Sarvam AI speech-to-text (set VITE_SARVAM_API_KEY in your .env)
 const SARVAM_API_KEY = import.meta.env.VITE_SARVAM_API_KEY as string | undefined;
@@ -165,6 +164,10 @@ export default function Chat() {
 
     setIsExporting(true);
     try {
+      const [{ default: html2canvas }, { default: jsPDF }] = await Promise.all([
+        import('html2canvas-pro'),
+        import('jspdf'),
+      ]);
       const canvas = await html2canvas(el, {
         backgroundColor: '#0a0e14',
         height: el.scrollHeight,
@@ -266,6 +269,7 @@ export default function Chat() {
             size="icon"
             onClick={handleVoice}
             disabled={isTranscribing}
+            aria-label={isListening ? 'Stop voice recording' : isTranscribing ? 'Transcribing voice query' : 'Start voice query'}
             className={`shrink-0 ${isListening ? 'bg-destructive/20 text-destructive border-destructive/50 animate-pulse' : isTranscribing ? 'opacity-60' : 'text-muted-foreground'}`}
           >
             <Mic className="w-4 h-4" />
@@ -277,7 +281,7 @@ export default function Chat() {
             className="flex-1 bg-background border-border/50 focus-visible:ring-secondary"
             disabled={sendMutation.isPending}
           />
-          <Button type="submit" size="icon" disabled={!input.trim() || sendMutation.isPending} className="bg-primary hover:bg-primary/90 text-primary-foreground shrink-0">
+          <Button type="submit" size="icon" aria-label="Send intelligence query" disabled={!input.trim() || sendMutation.isPending} className="bg-primary hover:bg-primary/90 text-primary-foreground shrink-0">
             <Send className="w-4 h-4" />
           </Button>
         </form>
@@ -374,7 +378,7 @@ function MessageBubble({ msg }: { msg: any }) {
                 Location Data Provided ({msg.mapData.length} points)
               </div>
               <div className="text-xs text-muted-foreground">
-                <Button variant="link" className="h-auto p-0 text-secondary hove:text-secondary/80">View on Hotspot Map →</Button>
+                <Link href="/map" className="font-medium text-secondary hover:text-secondary/80 hover:underline">View on Hotspot Map →</Link>
               </div>
             </div>
           )}

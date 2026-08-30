@@ -1,3 +1,4 @@
+import React, { lazy, Suspense } from 'react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { Toaster } from '@/components/ui/toaster';
 import { TooltipProvider } from '@/components/ui/tooltip';
@@ -5,24 +6,23 @@ import { Route, Switch, Router as WouterRouter, Redirect } from 'wouter';
 import { AuthProvider, useAuth } from '@/contexts/AuthContext';
 import { AppLayout } from '@/components/layout/AppLayout';
 
-import Login from '@/pages/login';
-import Dashboard from '@/pages/dashboard';
-import Chat from '@/pages/chat';
-import HotspotMap from '@/pages/map';
-import NetworkAnalysis from '@/pages/network';
-import Trends from '@/pages/trends';
-import AuditLogs from '@/pages/audit';
-import HowItWorks from '@/pages/how-it-works';
-import NotFound from '@/pages/not-found';
-
-import IntelligenceSearch from '@/pages/search';
-import CaseCorrelation from '@/pages/correlation';
-import MOIntelligence from '@/pages/mo-intelligence';
-import AnomalyAlerts from '@/pages/alerts';
-import ExplainableRisk from '@/pages/risk-analysis';
-import InvestigationWorkspace from '@/pages/workspace';
-import IntelligenceBriefs from '@/pages/reports';
-import SocioeconomicAnalysis from '@/pages/socioeconomic';
+const Login = lazy(() => import('@/pages/login'));
+const Dashboard = lazy(() => import('@/pages/dashboard'));
+const Chat = lazy(() => import('@/pages/chat'));
+const HotspotMap = lazy(() => import('@/pages/map'));
+const NetworkAnalysis = lazy(() => import('@/pages/network'));
+const Trends = lazy(() => import('@/pages/trends'));
+const AuditLogs = lazy(() => import('@/pages/audit'));
+const HowItWorks = lazy(() => import('@/pages/how-it-works'));
+const NotFound = lazy(() => import('@/pages/not-found'));
+const IntelligenceSearch = lazy(() => import('@/pages/search'));
+const CaseCorrelation = lazy(() => import('@/pages/correlation'));
+const MOIntelligence = lazy(() => import('@/pages/mo-intelligence'));
+const AnomalyAlerts = lazy(() => import('@/pages/alerts'));
+const ExplainableRisk = lazy(() => import('@/pages/risk-analysis'));
+const InvestigationWorkspace = lazy(() => import('@/pages/workspace'));
+const IntelligenceBriefs = lazy(() => import('@/pages/reports'));
+const SocioeconomicAnalysis = lazy(() => import('@/pages/socioeconomic'));
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -62,6 +62,32 @@ function AuthLoadingScreen() {
       <div className="w-8 h-8 border-2 border-primary border-t-transparent rounded-full animate-spin" />
     </div>
   );
+}
+
+class AppErrorBoundary extends React.Component<React.PropsWithChildren, { failed: boolean }> {
+  state = { failed: false };
+
+  static getDerivedStateFromError() {
+    return { failed: true };
+  }
+
+  render() {
+    if (this.state.failed) {
+      return (
+        <main className="min-h-screen bg-background text-foreground grid place-items-center p-6">
+          <section className="max-w-lg rounded-xl border border-border bg-card p-8 text-center shadow-xl">
+            <div className="mx-auto mb-4 grid h-12 w-12 place-items-center rounded-full bg-destructive/10 text-destructive text-xl">!</div>
+            <h1 className="text-xl font-bold">This intelligence module needs to recover</h1>
+            <p className="mt-2 text-sm text-muted-foreground">Your demo data is safe. Reload the module to restore the workspace.</p>
+            <button className="mt-5 rounded-md bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground" onClick={() => window.location.reload()}>
+              Reload SCRB-Sanket
+            </button>
+          </section>
+        </main>
+      );
+    }
+    return this.props.children;
+  }
 }
 
 function Router() {
@@ -139,16 +165,20 @@ function App() {
     : undefined;
 
   return (
-    <QueryClientProvider client={queryClient}>
-      <TooltipProvider>
-        <WouterRouter base={baseUrl}>
-          <AuthProvider>
-            <Router />
-          </AuthProvider>
-        </WouterRouter>
-        <Toaster />
-      </TooltipProvider>
-    </QueryClientProvider>
+    <AppErrorBoundary>
+      <QueryClientProvider client={queryClient}>
+        <TooltipProvider>
+          <WouterRouter base={baseUrl}>
+            <AuthProvider>
+              <Suspense fallback={<AuthLoadingScreen />}>
+                <Router />
+              </Suspense>
+            </AuthProvider>
+          </WouterRouter>
+          <Toaster />
+        </TooltipProvider>
+      </QueryClientProvider>
+    </AppErrorBoundary>
   );
 }
 
