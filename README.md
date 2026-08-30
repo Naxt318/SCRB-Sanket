@@ -2,7 +2,7 @@
 
 <div align="center">
 
-<img src="./karnataka-emblem.png" alt="Government of Karnataka Emblem" width="120"/>
+<img src="./assets/karnataka-emblem.png" alt="Government of Karnataka Emblem" width="120"/>
 
 **A next-generation crime-intelligence dashboard built for the Karnataka State Crime Records Bureau (SCRB)**
 
