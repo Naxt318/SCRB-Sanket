@@ -1,6 +1,8 @@
 <div align="center">
 
-<img src="./docs/assets/karnataka-state-emblem.png" alt="Karnataka State Emblem" width="190" />
+<p align="center">
+  <img src="./attached_assets/karnataka-emblem.png" alt="Karnataka State Emblem" width="170" />
+</p>
 
 # SCRB-Sanket
 
