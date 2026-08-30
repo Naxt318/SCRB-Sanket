@@ -1,5 +1,5 @@
 {
   "client": {
-    "source": "artifacts/scrb-sanket/dist/public"
+    "source": "dist"
   }
 }

@@ -12,6 +12,8 @@ pnpm start
 ```
 
 The server reads `PORT` from the hosting platform and binds to `0.0.0.0`.
+The build also stages the static application in the repository-level `dist/`
+directory expected by Slate and Catalyst static deployers.
 
 ## Required secrets
 
