@@ -11,7 +11,8 @@ pnpm build
 pnpm start
 ```
 
-The server reads `PORT` from the hosting platform and binds to `0.0.0.0`.
+The server reads `X_ZOHO_CATALYST_LISTEN_PORT` (or the conventional `PORT`)
+from the hosting platform and binds to `0.0.0.0`.
 The build also stages the static application in the repository-level `dist/`
 directory expected by Slate and Catalyst static deployers.
 
@@ -47,6 +48,20 @@ openssl rand -hex 32
 - Build command: `pnpm build`
 - Run command: `pnpm start`
 - Health check: `/health`
+
+## Zoho Catalyst AppSail
+
+Use AppSail for the full-stack deployment. Slate is suitable for the static
+demo, but cannot keep the Gemini credential server-side.
+
+1. Build with `VITE_API_MODE=server pnpm build`.
+2. Deploy the repository root as a Node.js AppSail service.
+3. Set the startup command to `node server/dist/index.js`.
+4. Add `GEMINI_API_KEY`, `DEMO_AUTH_SECRET`, and (optionally) `DATABASE_URL`
+   as AppSail environment variables in the Catalyst console.
+
+Do not configure `VITE_GEMINI_API_KEY`; Vite variables are embedded in public
+browser assets.
 
 ## Verification
 
