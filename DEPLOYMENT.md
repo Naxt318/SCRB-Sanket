@@ -27,6 +27,13 @@ Set these in the deployment platform, never in Git:
   compiled into the frontend and is visible to visitors, so use a restricted
   demo key only.
 
+## API mode
+
+- Static Slate/Catalyst deployment: leave `VITE_API_MODE` unset or set it to
+  `local`. Demo login and the core synthetic API run in the browser.
+- Full-stack deployment: set `VITE_API_MODE=server` at build time and run
+  `pnpm start` so `/api/*` is handled by Express.
+
 Generate an auth secret with:
 
 ```bash

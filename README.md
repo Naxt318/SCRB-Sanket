@@ -186,7 +186,11 @@ For optional browser speech-to-text, create `artifacts/scrb-sanket/.env.local`:
 
 ```env
 VITE_SARVAM_API_KEY=""
+VITE_API_MODE="local"
 ```
+
+Use `VITE_API_MODE=local` (the default) for a static prototype deployment.
+Use `VITE_API_MODE=server` when the Express service is deployed alongside the frontend.
 
 Generate a secure JWT signing secret with:
 
