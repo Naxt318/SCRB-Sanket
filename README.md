@@ -1,153 +1,286 @@
-# 🛡️ SANKET — AI Crime Intelligence Command Center
-
 <div align="center">
 
-<img src="./assets/karnataka-emblem.png" alt="Government of Karnataka Emblem" width="120"/>
+<img src="./docs/assets/karnataka-state-emblem.png" alt="Karnataka State Emblem" width="190" />
 
-**A next-generation crime-intelligence dashboard built for the Karnataka State Crime Records Bureau (SCRB)**
+# SANKET
 
-*Built for Datathon 2026 · Karnataka State Police × Hack2skill*
+### AI Crime Intelligence Command Center
 
-🔗 **Live Demo:** [scrb-sanket.web.app](https://scrb-sanket.web.app)
+**Turning fragmented crime records into explainable, actionable intelligence for the Karnataka State Crime Records Bureau.**
+
+[![Datathon 2026](https://img.shields.io/badge/Datathon-2026-7c3aed?style=for-the-badge)](https://hack2skill.com/event/datathon2026)
+[![Karnataka SCRB](https://img.shields.io/badge/Karnataka-SCRB-b91c1c?style=for-the-badge)](#)
+[![React 19](https://img.shields.io/badge/React-19-149eca?style=for-the-badge&logo=react&logoColor=white)](https://react.dev/)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5.9-3178c6?style=for-the-badge&logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
+[![Node.js 22](https://img.shields.io/badge/Node.js-22-339933?style=for-the-badge&logo=nodedotjs&logoColor=white)](https://nodejs.org/)
+
+[**Live Prototype**](https://scrb-sanket.web.app) · [**Features**](#-intelligence-capabilities) · [**Quick Start**](#-quick-start) · [**Architecture**](#-system-architecture) · [**Deploy**](#-production-deployment)
+
+<br />
+
+> Shortlisted for the next phase of **Datathon 2026**, organized by Hack2skill in partnership with Karnataka State Police.
 
 </div>
 
 ---
 
-## 📖 Overview
+## The mission
 
-**SANKET** is a fully client-side, zero-backend crime-intelligence command center designed to give law enforcement analysts a fast, AI-assisted view into crime patterns, hotspots, and networks. Built entirely with synthetic demo data, it demonstrates how modern web tooling and generative AI can be combined into a lightweight, easily deployable operational dashboard — no server infrastructure required.
+Crime data is rarely valuable merely because it exists. Its operational value appears when analysts can connect incidents across place, time, people, modus operandi, and socioeconomic context—and explain why a signal deserves attention.
 
----
+**SANKET** is a full-stack crime-intelligence prototype designed around that goal. It brings search, geospatial analysis, temporal trends, relationship discovery, anomaly detection, explainable risk scoring, investigation workspaces, and evidence-grounded reporting into one role-aware command center.
 
-## ✨ Features
+The prototype is deliberately built with **synthetic demonstration data**. It shows the workflow and analytical possibilities without exposing real citizens, victims, suspects, FIRs, or operational police data.
 
-| Module | Description |
+## Why SANKET
+
+| Challenge | SANKET response |
 |---|---|
-| 📊 **Dashboard** | High-level overview of crime statistics and key metrics |
-| 🤖 **AI Query (Chat)** | Natural-language querying powered by Google Gemini, with a rule-based fallback when AI is unavailable |
-| 🗺️ **Hotspot Map** | Geographic visualization of crime concentration areas |
-| 📈 **Trends** | Time-series analysis of crime patterns |
-| 🕸️ **Network** | Link analysis for uncovering relationships between entities |
-| 📜 **Audit Log** | Full activity/action tracking for accountability |
-| ❓ **How It Works** | In-app explainer for onboarding new users |
-| 🔐 **Login** | Access control for the dashboard |
+| Records are spread across views and systems | One searchable intelligence workspace |
+| Patterns are difficult to see in tabular data | Maps, trends, graphs, correlations, and MO profiles |
+| Black-box scores are hard to trust | Additive factor breakdowns and provenance cues |
+| Analysts lose context between sessions | Persistent investigation workspaces |
+| Reports take time to assemble | Structured, evidence-grounded intelligence briefs |
+| Sensitive workflows need accountability | Role-based access and audit logging |
+| A prototype may lose cloud services during a demo | Synthetic and in-memory fallback behavior |
 
-### 🎙️ AI & Voice
-- Conversational AI assistant powered by **Google Gemini API**
-- Graceful **rule-based fallback** ensures the assistant works even without live AI access
-- **Voice input** via **Sarvam AI** speech-to-text — supports **English and Kannada**
-- **Chat export to PDF** using `html2canvas-pro` + `jsPDF`
+## ✦ Intelligence capabilities
 
----
+### Command and discovery
 
-## 🏗️ Tech Stack
+| Module | What it delivers |
+|---|---|
+| **Command Dashboard** | Statewide KPIs, crime distribution, district comparisons, recent activity, and early-warning summaries |
+| **Intelligence Search** | Multi-field discovery across FIR records and operational metadata |
+| **AI Query Assistant** | Natural-language analysis with reasoning, cited source records, charts, map points, and conversation history |
+| **Hotspot Map** | Interactive geographic visualization of incident concentration and intensity |
+| **Crime Trends** | Time-series views for district, crime-type, and date-range analysis |
 
+### Advanced analysis
+
+| Module | What it delivers |
+|---|---|
+| **Case Correlation** | Multi-signal similarity scoring across geography, time, offence type, and MO indicators |
+| **Network Analysis** | Entity and incident link graphs for exploring connected people and cases |
+| **MO Intelligence** | Recurring modus-operandi profiles and related-case navigation |
+| **Anomaly Alerts** | Volume spikes, geographic clusters, temporal concentration, and recurring-MO warnings |
+| **Explainable Risk** | Area risk scores from 0–100 with visible contributing factors—no unexplained black-box number |
+| **Socioeconomic Context** | Non-causal statistical associations between demographic context and recorded crime density |
+
+### Investigation and governance
+
+| Module | What it delivers |
+|---|---|
+| **Investigation Workspace** | Persistent collections connecting FIRs, persons, MO findings, notes, and evidence |
+| **Intelligence Briefs** | Eleven-section structured reports covering trends, hotspots, anomalies, networks, risk, evidence, and recommended focus |
+| **Audit Log** | Traceable user queries and actions for supervisory accountability |
+| **Role-Aware Access** | Investigator, Supervisor, and Admin experiences with restricted analytical routes |
+| **How It Works** | In-product transparency notes, methodology, provenance, and limitations |
+
+### AI, voice, and export
+
+- **Grounded responses** connect analytical answers to relevant synthetic FIR records.
+- **Explainability panels** expose reasoning and provenance instead of presenting unsupported conclusions.
+- **Graceful fallback logic** keeps core demonstrations usable when an external AI service is unavailable.
+- **English and Kannada voice input** is available through the optional Sarvam AI integration.
+- **PDF export** uses `html2canvas-pro` and `jsPDF` for portable chat and analysis output.
+
+## 🧭 Product flow
+
+```text
+Authenticate
+    ↓
+Command Dashboard
+    ↓
+Search ── Hotspots ── Trends ── AI Query
+    ↓           ↓          ↓          ↓
+Correlations ─ MO ─ Networks ─ Anomalies
+    ↓
+Explainable Risk ─ Socioeconomic Context
+    ↓
+Investigation Workspace
+    ↓
+Evidence-grounded Intelligence Brief + Audit Trail
 ```
-Frontend      React 19 + Vite + TypeScript
-Styling       Tailwind CSS v4 + shadcn/ui
-Architecture  Fully client-side — zero backend server
-Monorepo      pnpm workspace
-AI            Google Gemini API
-Voice         Sarvam AI (Speech-to-Text)
-Export        html2canvas-pro, jsPDF
-Hosting       Firebase Hosting
+
+## 🏗 System architecture
+
+```text
+┌──────────────────────────────────────────────────────────────────┐
+│                         React 19 client                          │
+│  Dashboard · Search · Maps · Graphs · Workspaces · Reports      │
+└──────────────────────────────┬───────────────────────────────────┘
+                               │ same-origin /api
+┌──────────────────────────────▼───────────────────────────────────┐
+│                    Express + TypeScript API                      │
+│  Auth · FIR analytics · Correlation · Risk · MO · Reporting     │
+└───────────────┬──────────────────────────────┬───────────────────┘
+                │                              │
+┌───────────────▼──────────────┐  ┌────────────▼──────────────────┐
+│ PostgreSQL + Prisma          │  │ Synthetic / in-memory engine │
+│ Persistent production data  │  │ Resilient prototype fallback │
+└──────────────────────────────┘  └───────────────────────────────┘
 ```
 
-> **Note:** This project is entirely client-side by design — no backend server is required to run or deploy it.
+The production process serves both the compiled React application and the API. This provides one build, one runtime, same-origin requests, and SPA deep-link fallback.
 
----
+## Technology stack
 
-## 🚀 Architecture Journey
+| Layer | Technologies |
+|---|---|
+| **Frontend** | React 19, TypeScript, Vite, Wouter, TanStack Query |
+| **Interface** | Tailwind CSS v4, shadcn/ui, Radix UI, Framer Motion, Lucide |
+| **Visualization** | Recharts, Leaflet, React Leaflet, React Force Graph |
+| **Backend** | Node.js 22, Express, TypeScript, Zod |
+| **Data** | PostgreSQL, Prisma ORM, synthetic/in-memory fallback |
+| **Authentication** | JWT, bcrypt, role-aware protected routes |
+| **AI and voice** | Evidence-grounded analysis, optional Gemini and Sarvam integrations |
+| **Export** | jsPDF, html2canvas-pro |
+| **Tooling** | pnpm workspaces, TypeScript project references |
 
-SANKET went through several deployment iterations before landing on its current lightweight architecture:
+## 🔐 Demo access
 
-```
-Replit Export → Windows Local Dev → Vercel → Firebase → Fully Client-Side (Zero Backend)
-```
+All demo roles use the password `scrb2024`.
 
-This evolution reflects a deliberate simplification: moving away from server dependencies toward a self-contained, easily deployable static application.
+| Role | Email | Access |
+|---|---|---|
+| **Investigator** | `investigator@scrb.demo` | Core dashboards, search, analysis, maps, workspaces, and reports |
+| **Supervisor** | `supervisor@scrb.demo` | Investigator capabilities plus restricted network and audit views |
+| **Admin** | `admin@scrb.demo` | Full prototype access |
 
----
+> These accounts exist for evaluation only. Replace demo credentials and fallback authentication before real-world use.
 
-## ⚙️ Getting Started
+## 🚀 Quick start
 
 ### Prerequisites
-- Node.js (LTS recommended)
-- `pnpm` package manager
 
-### Installation
+- Node.js 22
+- pnpm
+- PostgreSQL is optional for the fallback demo and recommended for persistence
 
-```bash
-# Clone the repository
-git clone <your-repo-url>
-cd sanket
-
-# Install dependencies
-pnpm install
-
-# Run the development server
-pnpm dev
-```
-
-### Build for Production
+### Install and run
 
 ```bash
-pnpm build
+git clone https://github.com/Naxt318/SCRB-Sanket.git
+cd SCRB-Sanket
+pnpm install --frozen-lockfile
+pnpm dev:all
 ```
 
-### Environment Variables
+Open `http://localhost:5173` unless your environment selects another port.
 
-Create a `.env` file in the root directory with your API keys:
+### Environment variables
+
+Create `server/.env` for the API:
 
 ```env
-VITE_GEMINI_API_KEY=your_gemini_api_key
-VITE_SARVAM_API_KEY=your_sarvam_api_key
+DATABASE_URL="postgresql://postgres:postgres@localhost:5432/scrb_sanket?schema=public"
+PORT=5000
+DEMO_AUTH_SECRET="replace-with-a-long-random-secret"
+GEMINI_API_KEY=""
 ```
 
----
+For optional browser speech-to-text, create `artifacts/scrb-sanket/.env.local`:
 
-## 📦 Deployment
+```env
+VITE_SARVAM_API_KEY=""
+```
 
-Currently deployed on **Firebase Hosting**:
+Generate a secure JWT signing secret with:
 
 ```bash
-firebase deploy
+openssl rand -hex 32
 ```
 
-Live at: **[scrb-sanket.web.app](https://scrb-sanket.web.app)**
+### Initialize PostgreSQL
 
----
+```bash
+pnpm --filter server prisma:generate
+pnpm --filter server db:push
+pnpm --filter server db:seed
+```
 
-## 🐛 Known Fixes & Improvements
+## 📦 Production deployment
 
-- ✅ Resolved Gemini model deprecation issues
-- ✅ Fixed session ID query parameter handling
-- ✅ Resolved Tailwind v4 / `html2canvas` incompatibility
-- ✅ Codebase cleanup and streamlined GitHub push workflow
+SANKET ships as a single deployable service.
 
----
+```bash
+pnpm install --frozen-lockfile
+pnpm build
+pnpm start
+```
 
-## ⚠️ Disclaimer
+Recommended platform configuration:
 
-This project uses **synthetic demo data only**. It is a hackathon prototype built for demonstration purposes as part of Datathon 2026 and does not process or store real crime data.
+| Setting | Value |
+|---|---|
+| Runtime | Node.js 22 |
+| Install command | `pnpm install --frozen-lockfile` |
+| Build command | `pnpm build` |
+| Run command | `pnpm start` |
+| Health endpoint | `/health` |
 
----
+After deployment, verify `/`, `/dashboard`, `/assets/*`, and `/health`. See [DEPLOYMENT.md](./DEPLOYMENT.md) for the complete checklist.
 
-## 🏆 Recognition
+## Repository map
 
-Built for **Datathon 2026**, organized by **Hack2skill** in partnership with the **Karnataka State Police**. Shortlisted for the next phase of the competition.
+```text
+SCRB-Sanket/
+├── artifacts/
+│   └── scrb-sanket/        # React application
+├── lib/
+│   ├── api-client-react/    # Shared typed client
+│   ├── api-spec/            # OpenAPI contract and generation config
+│   └── api-zod/             # Shared validation schemas
+├── server/
+│   ├── prisma/              # Data model and seed data
+│   └── src/                 # Express API, middleware, and analysis services
+├── docs/assets/             # Repository media
+├── DEPLOYMENT.md            # Production checklist
+└── pnpm-workspace.yaml      # Monorepo definition
+```
 
----
+## API surface
 
-## 👤 Team
+The application exposes grouped endpoints for:
 
-Built by **Nanak** and team.
+- authentication and health;
+- FIR retrieval, summaries, hotspots, trends, district and type breakdowns;
+- early warnings, network data, and audit history;
+- chat sessions and grounded analysis;
+- case correlations, MO profiles, anomalies, alerts, and risk scoring;
+- intelligence search, workspaces, reports, and socioeconomic context.
+
+Protected endpoints require a bearer token. Supervisory screens additionally enforce role checks in the client and API workflow.
+
+## Trust, safety, and responsible use
+
+> [!IMPORTANT]
+> SANKET is a Datathon prototype, not a production policing system.
+
+- Every included incident and person is **synthetic**.
+- The application must not be used to infer guilt, predict individual criminality, or make automated enforcement decisions.
+- Socioeconomic outputs are explicitly **correlational, not causal**.
+- Risk scores are decision-support signals and expose their factor contributions.
+- Human review, legal authorization, data minimization, access controls, retention rules, and independent bias testing are mandatory before real deployment.
+- Client-visible API keys must be restricted; secrets belong in the hosting platform’s secret manager, never in Git.
+
+## Datathon recognition
+
+SANKET was built for **Datathon 2026** and shortlisted for its next evaluation phase. The project demonstrates how an explainable, analyst-centered interface can bring together multiple crime-intelligence workflows while remaining transparent about data provenance and limitations.
+
+## Team
+
+Built by **Nanak Tekchandani and team** for Karnataka State Police × Hack2skill Datathon 2026.
 
 ---
 
 <div align="center">
 
-*Made with ⚡ for safer, smarter policing.*
+### संकेत · SANKET
+
+**From records to signals. From signals to responsible action.**
+
+<sub>Built with purpose for safer, smarter, and more accountable public service.</sub>
 
 </div>
