@@ -8,18 +8,16 @@
 
 **From fragmented records to explainable intelligence—before the next pattern becomes the next incident.**
 
-[![Datathon 2026](https://img.shields.io/badge/KSP_DATATHON-2026-6D28D9?style=for-the-badge)](https://hack2skill.com/event/datathon2026)
-[![Shortlisted](https://img.shields.io/badge/STATUS-SHORTLISTED-16A34A?style=for-the-badge)](#recognition)
-[![Live on Catalyst](https://img.shields.io/badge/LIVE-ZOHO_CATALYST-EA4335?style=for-the-badge)](https://scrb-sanket-v2-50045404109.development.catalystappsail.in/)
-[![Responsible AI](https://img.shields.io/badge/AI-EXPLAINABLE-0369A1?style=for-the-badge)](#trust-safety-and-responsible-use)
+[![React 19](https://img.shields.io/badge/React_19-149ECA?style=for-the-badge&logo=react&logoColor=white)](https://react.dev/)
+[![TypeScript 5.9](https://img.shields.io/badge/TypeScript_5.9-3178C6?style=for-the-badge&logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
+[![Node.js 24](https://img.shields.io/badge/Node.js_24-339933?style=for-the-badge&logo=nodedotjs&logoColor=white)](https://nodejs.org/)
+[![Express](https://img.shields.io/badge/Express-111111?style=for-the-badge&logo=express&logoColor=white)](https://expressjs.com/)
+[![Google Gemini](https://img.shields.io/badge/Google_Gemini-8E75B2?style=for-the-badge&logo=googlegemini&logoColor=white)](https://ai.google.dev/)
+[![Zoho Catalyst](https://img.shields.io/badge/Zoho_Catalyst-EA4335?style=for-the-badge&logo=zoho&logoColor=white)](https://catalyst.zoho.com/)
 
 <br />
 
 [**Launch Live Prototype**](https://scrb-sanket-v2-50045404109.development.catalystappsail.in/) · [**Watch Demo**](https://drive.google.com/file/d/1UXoEyusXB1T5lh_U_HvbBr2uTIA9awe4/view?usp=sharing) · [**Explore Features**](#intelligence-command-center) · [**Run Locally**](#quick-start)
-
-<br />
-
-> **Shortlisted for the next phase of Datathon 2026.** Built for the Karnataka State Police challenge by **Team Token Burners**.
 
 </div>
 
