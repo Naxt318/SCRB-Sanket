@@ -51,7 +51,7 @@
   <strong>Launch Live Prototype</strong>
 </a>
 &nbsp; · &nbsp;
-<a href="https://drive.google.com/file/d/1UXoEyusXB1T5lh_U_HvbBr2uTIA9awe4/view?usp=sharing">
+<a href="https://drive.google.com/file/d/1snKyyk-1wrXnM4RsSeJUPVCD2rb2Fiww/view?usp=sharing">
   <strong>Watch Demo</strong>
 </a>
 &nbsp; · &nbsp;
@@ -322,6 +322,6 @@ SCRB-Sanket was shortlisted for the next evaluation phase of **KSP Datathon 2026
 
 <sub>Built with purpose for safer, smarter, and more responsible public service.</sub>
 
-[Launch Prototype](https://scrb-sanket-v2-50045404109.development.catalystappsail.in/) · [Watch Demo](https://drive.google.com/file/d/1UXoEyusXB1T5lh_U_HvbBr2uTIA9awe4/view?usp=sharing)
+[Launch Prototype](https://scrb-sanket-v2-50045404109.development.catalystappsail.in/) · [Watch Demo](https://drive.google.com/file/d/1snKyyk-1wrXnM4RsSeJUPVCD2rb2Fiww/view?usp=sharing)
 
 </div>
