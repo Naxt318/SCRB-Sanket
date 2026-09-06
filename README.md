@@ -1,8 +1,12 @@
 <div align="center">
 
-<img src="docs/assets/karnataka-state-emblem.png" alt="Karnataka State Emblem" width="150" />
+<p align="center">
+  <img src="artifacts/scrb-sanket/src/assets/karnataka-emblem.png" alt="Karnataka State Emblem" width="148" />
+</p>
 
-# SCRB-Sanket
+<p align="center">
+  <img src="docs/assets/scrb-sanket-wordmark.svg" alt="SCRB-Sanket — Crime Intelligence Explained" width="680" />
+</p>
 
 ### AI Crime Intelligence Command Center
 

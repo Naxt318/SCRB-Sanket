@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="920" height="132" viewBox="0 0 920 132" role="img" aria-labelledby="title description">
+  <title id="title">SCRB-Sanket</title>
+  <desc id="description">SCRB-Sanket wordmark in navy and Karnataka gold</desc>
+  <defs>
+    <linearGradient id="gold" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#9A6700"/>
+      <stop offset="0.5" stop-color="#E3B341"/>
+      <stop offset="1" stop-color="#9A6700"/>
+    </linearGradient>
+  </defs>
+  <path d="M80 66H278" stroke="url(#gold)" stroke-width="3" stroke-linecap="round"/>
+  <path d="M642 66H840" stroke="url(#gold)" stroke-width="3" stroke-linecap="round"/>
+  <circle cx="66" cy="66" r="5" fill="#B78716"/>
+  <circle cx="854" cy="66" r="5" fill="#B78716"/>
+  <text x="460" y="78" text-anchor="middle" fill="#102A43" font-family="Georgia, 'Times New Roman', serif" font-size="62" font-weight="700" letter-spacing="5">SCRB-SANKET</text>
+  <text x="460" y="112" text-anchor="middle" fill="#6B7280" font-family="Arial, Helvetica, sans-serif" font-size="13" font-weight="600" letter-spacing="6">CRIME INTELLIGENCE · EXPLAINED</text>
+</svg>
