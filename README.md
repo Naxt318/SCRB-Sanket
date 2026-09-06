@@ -1,27 +1,67 @@
 <div align="center">
 
 <p align="center">
-  <img src="artifacts/scrb-sanket/src/assets/karnataka-emblem.png" alt="Karnataka State Emblem" width="148" />
+  <img
+    src="artifacts/scrb-sanket/src/assets/karnataka-emblem.png"
+    alt="Karnataka State Emblem"
+    width="148"
+  />
 </p>
 
 <p align="center">
-  <img src="docs/assets/scrb-sanket-wordmark.svg" alt="SCRB-Sanket — Crime Intelligence Explained" width="680" />
+  <img
+    src="docs/assets/scrb-sanket-wordmark.svg"
+    alt="SCRB-Sanket"
+    width="680"
+  />
 </p>
 
-### AI Crime Intelligence Command Center
+<h2>AI CRIME INTELLIGENCE · EXPLAINED</h2>
 
-**From fragmented records to explainable intelligence—before the next pattern becomes the next incident.**
-
-[![React 19](https://img.shields.io/badge/React_19-149ECA?style=for-the-badge&logo=react&logoColor=white)](https://react.dev/)
-[![TypeScript 5.9](https://img.shields.io/badge/TypeScript_5.9-3178C6?style=for-the-badge&logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
-[![Node.js 24](https://img.shields.io/badge/Node.js_24-339933?style=for-the-badge&logo=nodedotjs&logoColor=white)](https://nodejs.org/)
-[![Express](https://img.shields.io/badge/Express-111111?style=for-the-badge&logo=express&logoColor=white)](https://expressjs.com/)
-[![Google Gemini](https://img.shields.io/badge/Google_Gemini-8E75B2?style=for-the-badge&logo=googlegemini&logoColor=white)](https://ai.google.dev/)
-[![Zoho Catalyst](https://img.shields.io/badge/Zoho_Catalyst-EA4335?style=for-the-badge&logo=zoho&logoColor=white)](https://catalyst.zoho.com/)
+<p>
+  <strong>
+    From fragmented records to explainable intelligence—before the next pattern becomes the next incident.
+  </strong>
+</p>
 
 <br />
 
-[**Launch Live Prototype**](https://scrb-sanket-v2-50045404109.development.catalystappsail.in/) · [**Watch Demo**](https://drive.google.com/file/d/1UXoEyusXB1T5lh_U_HvbBr2uTIA9awe4/view?usp=sharing) · [**Explore Features**](#intelligence-command-center) · [**Run Locally**](#quick-start)
+<a href="https://react.dev/">
+  <img src="https://img.shields.io/badge/React_19-149ECA?style=for-the-badge&logo=react&logoColor=white" alt="React 19" />
+</a>
+<a href="https://www.typescriptlang.org/">
+  <img src="https://img.shields.io/badge/TypeScript_5.9-3178C6?style=for-the-badge&logo=typescript&logoColor=white" alt="TypeScript 5.9" />
+</a>
+<a href="https://nodejs.org/">
+  <img src="https://img.shields.io/badge/Node.js_24-339933?style=for-the-badge&logo=nodedotjs&logoColor=white" alt="Node.js 24" />
+</a>
+<a href="https://expressjs.com/">
+  <img src="https://img.shields.io/badge/Express-111111?style=for-the-badge&logo=express&logoColor=white" alt="Express" />
+</a>
+<a href="https://ai.google.dev/">
+  <img src="https://img.shields.io/badge/Google_Gemini-8E75B2?style=for-the-badge&logo=googlegemini&logoColor=white" alt="Google Gemini" />
+</a>
+<a href="https://catalyst.zoho.com/">
+  <img src="https://img.shields.io/badge/Zoho_Catalyst-EA4335?style=for-the-badge&logo=zoho&logoColor=white" alt="Zoho Catalyst" />
+</a>
+
+<br /><br />
+
+<a href="https://scrb-sanket-v2-50045404109.development.catalystappsail.in/">
+  <strong>Launch Live Prototype</strong>
+</a>
+&nbsp; · &nbsp;
+<a href="https://drive.google.com/file/d/1UXoEyusXB1T5lh_U_HvbBr2uTIA9awe4/view?usp=sharing">
+  <strong>Watch Demo</strong>
+</a>
+&nbsp; · &nbsp;
+<a href="#intelligence-command-center">
+  <strong>Explore Features</strong>
+</a>
+&nbsp; · &nbsp;
+<a href="#quick-start">
+  <strong>Run Locally</strong>
+</a>
 
 </div>
 
