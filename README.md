@@ -1,164 +1,179 @@
 <div align="center">
 
-<p align="center">
-  <img src="./attached_assets/karnataka-emblem.png" alt="Karnataka State Emblem" width="170" />
-</p>
+<img src="docs/assets/karnataka-state-emblem.png" alt="Karnataka State Emblem" width="150" />
 
 # SCRB-Sanket
 
 ### AI Crime Intelligence Command Center
 
-**Turning fragmented crime records into explainable, actionable intelligence for the Karnataka State Crime Records Bureau.**
+**From fragmented records to explainable intelligence—before the next pattern becomes the next incident.**
 
-[![Datathon 2026](https://img.shields.io/badge/Datathon-2026-7c3aed?style=for-the-badge)](https://hack2skill.com/event/datathon2026)
-[![Karnataka SCRB](https://img.shields.io/badge/Karnataka-SCRB-b91c1c?style=for-the-badge)](#)
-[![React 19](https://img.shields.io/badge/React-19-149eca?style=for-the-badge&logo=react&logoColor=white)](https://react.dev/)
-[![TypeScript](https://img.shields.io/badge/TypeScript-5.9-3178c6?style=for-the-badge&logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
-[![Node.js 22](https://img.shields.io/badge/Node.js-22-339933?style=for-the-badge&logo=nodedotjs&logoColor=white)](https://nodejs.org/)
-
-[**Live Prototype**](https://scrb-sanket.web.app) · [**Features**](#-intelligence-capabilities) · [**Quick Start**](#-quick-start) · [**Architecture**](#-system-architecture) · [**Deploy**](#-production-deployment)
+[![Datathon 2026](https://img.shields.io/badge/KSP_DATATHON-2026-6D28D9?style=for-the-badge)](https://hack2skill.com/event/datathon2026)
+[![Shortlisted](https://img.shields.io/badge/STATUS-SHORTLISTED-16A34A?style=for-the-badge)](#recognition)
+[![Live on Catalyst](https://img.shields.io/badge/LIVE-ZOHO_CATALYST-EA4335?style=for-the-badge)](https://scrb-sanket-v2-50045404109.development.catalystappsail.in/)
+[![Responsible AI](https://img.shields.io/badge/AI-EXPLAINABLE-0369A1?style=for-the-badge)](#trust-safety-and-responsible-use)
 
 <br />
 
-> Shortlisted for the next phase of **Datathon 2026**, organized by Hack2skill in partnership with Karnataka State Police.
+[**Launch Live Prototype**](https://scrb-sanket-v2-50045404109.development.catalystappsail.in/) · [**Watch Demo**](https://drive.google.com/file/d/1UXoEyusXB1T5lh_U_HvbBr2uTIA9awe4/view?usp=sharing) · [**Explore Features**](#intelligence-command-center) · [**Run Locally**](#quick-start)
+
+<br />
+
+> **Shortlisted for the next phase of Datathon 2026.** Built for the Karnataka State Police challenge by **Team Token Burners**.
 
 </div>
 
 ---
 
-## The mission
+## The 30-second pitch
 
-Crime data is rarely valuable merely because it exists. Its operational value appears when analysts can connect incidents across place, time, people, modus operandi, and socioeconomic context—and explain why a signal deserves attention.
+Police intelligence teams do not suffer from a lack of data—they suffer from disconnected data, slow manual reporting, and signals that remain invisible across cases.
 
-**SCRB-Sanket** is a full-stack crime-intelligence prototype designed around that goal. It brings search, geospatial analysis, temporal trends, relationship discovery, anomaly detection, explainable risk scoring, investigation workspaces, and evidence-grounded reporting into one role-aware command center.
+**SCRB-Sanket** transforms siloed crime records into one role-aware intelligence workspace. It helps an analyst search incidents, discover related cases, inspect criminal networks, identify hotspots and anomalies, understand modus operandi, calculate explainable area risk, organize investigations, and produce evidence-grounded briefs—without presenting a black-box prediction as fact.
 
-The prototype is deliberately built with **synthetic demonstration data**. It shows the workflow and analytical possibilities without exposing real citizens, victims, suspects, FIRs, or operational police data.
+The result is a prototype for **faster analysis, earlier pattern recognition, clearer supervision, and more accountable decision support**.
 
-## Why SCRB-Sanket
+## Why this matters
 
-| Challenge | SCRB-Sanket response |
+| Today’s operational gap | SCRB-Sanket’s response |
 |---|---|
-| Records are spread across views and systems | One searchable intelligence workspace |
-| Patterns are difficult to see in tabular data | Maps, trends, graphs, correlations, and MO profiles |
-| Black-box scores are hard to trust | Additive factor breakdowns and provenance cues |
-| Analysts lose context between sessions | Persistent investigation workspaces |
-| Reports take time to assemble | Structured, evidence-grounded intelligence briefs |
-| Sensitive workflows need accountability | Role-based access and audit logging |
-| A prototype may lose cloud services during a demo | Synthetic and in-memory fallback behavior |
+| Crime records live in disconnected views and systems | One unified, searchable command center |
+| Cross-district patterns are difficult to identify manually | Correlation, MO, network, map, and trend analysis |
+| Conventional reports are retrospective and time-consuming | Early-warning signals and generated intelligence briefs |
+| A score without an explanation cannot be responsibly trusted | Transparent factor breakdowns, provenance, and cited records |
+| Investigators lose context between tools and sessions | Persistent case-centric investigation workspaces |
+| Sensitive analysis requires oversight | Role-aware access and an auditable activity trail |
 
-## ✦ Intelligence capabilities
+## Prototype at a glance
 
-### Command and discovery
+<div align="center">
 
-| Module | What it delivers |
-|---|---|
-| **Command Dashboard** | Statewide KPIs, crime distribution, district comparisons, recent activity, and early-warning summaries |
-| **Intelligence Search** | Multi-field discovery across FIR records and operational metadata |
-| **AI Query Assistant** | Natural-language analysis with reasoning, cited source records, charts, map points, and conversation history |
-| **Hotspot Map** | Interactive geographic visualization of incident concentration and intensity |
-| **Crime Trends** | Time-series views for district, crime-type, and date-range analysis |
+| **16** intelligence screens | **10** advanced intelligence APIs | **3** operational roles | **1** unified workflow |
+|:---:|:---:|:---:|:---:|
+| Search to reporting | Correlation to risk | Investigator · Supervisor · Admin | Signal to responsible action |
 
-### Advanced analysis
+</div>
 
-| Module | What it delivers |
-|---|---|
-| **Case Correlation** | Multi-signal similarity scoring across geography, time, offence type, and MO indicators |
-| **Network Analysis** | Entity and incident link graphs for exploring connected people and cases |
-| **MO Intelligence** | Recurring modus-operandi profiles and related-case navigation |
-| **Anomaly Alerts** | Volume spikes, geographic clusters, temporal concentration, and recurring-MO warnings |
-| **Explainable Risk** | Area risk scores from 0–100 with visible contributing factors—no unexplained black-box number |
-| **Socioeconomic Context** | Non-causal statistical associations between demographic context and recorded crime density |
+### Try it now
 
-### Investigation and governance
+Open the [live Catalyst deployment](https://scrb-sanket-v2-50045404109.development.catalystappsail.in/) and use any evaluation profile below.
 
-| Module | What it delivers |
-|---|---|
-| **Investigation Workspace** | Persistent collections connecting FIRs, persons, MO findings, notes, and evidence |
-| **Intelligence Briefs** | Eleven-section structured reports covering trends, hotspots, anomalies, networks, risk, evidence, and recommended focus |
-| **Audit Log** | Traceable user queries and actions for supervisory accountability |
-| **Role-Aware Access** | Investigator, Supervisor, and Admin experiences with restricted analytical routes |
-| **How It Works** | In-product transparency notes, methodology, provenance, and limitations |
-
-### AI, voice, and export
-
-- **Grounded responses** connect analytical answers to relevant synthetic FIR records.
-- **Explainability panels** expose reasoning and provenance instead of presenting unsupported conclusions.
-- **Graceful fallback logic** keeps core demonstrations usable when an external AI service is unavailable.
-- **English and Kannada voice input** is available through the optional Sarvam AI integration.
-- **PDF export** uses `html2canvas-pro` and `jsPDF` for portable chat and analysis output.
-
-## 🧭 Product flow
-
-```text
-Authenticate
-    ↓
-Command Dashboard
-    ↓
-Search ── Hotspots ── Trends ── AI Query
-    ↓           ↓          ↓          ↓
-Correlations ─ MO ─ Networks ─ Anomalies
-    ↓
-Explainable Risk ─ Socioeconomic Context
-    ↓
-Investigation Workspace
-    ↓
-Evidence-grounded Intelligence Brief + Audit Trail
-```
-
-## 🏗 System architecture
-
-```text
-┌──────────────────────────────────────────────────────────────────┐
-│                         React 19 client                          │
-│  Dashboard · Search · Maps · Graphs · Workspaces · Reports      │
-└──────────────────────────────┬───────────────────────────────────┘
-                               │ same-origin /api
-┌──────────────────────────────▼───────────────────────────────────┐
-│                    Express + TypeScript API                      │
-│  Auth · FIR analytics · Correlation · Risk · MO · Reporting     │
-└───────────────┬──────────────────────────────┬───────────────────┘
-                │                              │
-┌───────────────▼──────────────┐  ┌────────────▼──────────────────┐
-│ PostgreSQL + Prisma          │  │ Synthetic / in-memory engine │
-│ Persistent production data  │  │ Resilient prototype fallback │
-└──────────────────────────────┘  └───────────────────────────────┘
-```
-
-The production process serves both the compiled React application and the API. This provides one build, one runtime, same-origin requests, and SPA deep-link fallback.
-
-## Technology stack
-
-| Layer | Technologies |
-|---|---|
-| **Frontend** | React 19, TypeScript, Vite, Wouter, TanStack Query |
-| **Interface** | Tailwind CSS v4, shadcn/ui, Radix UI, Framer Motion, Lucide |
-| **Visualization** | Recharts, Leaflet, React Leaflet, React Force Graph |
-| **Backend** | Node.js 22, Express, TypeScript, Zod |
-| **Data** | PostgreSQL, Prisma ORM, synthetic/in-memory fallback |
-| **Authentication** | JWT, bcrypt, role-aware protected routes |
-| **AI and voice** | Evidence-grounded analysis, optional Gemini and Sarvam integrations |
-| **Export** | jsPDF, html2canvas-pro |
-| **Tooling** | pnpm workspaces, TypeScript project references |
-
-## 🔐 Demo access
-
-All demo roles use the password `scrb2024`.
-
-| Role | Email | Access |
+| Experience | Email | Password |
 |---|---|---|
-| **Investigator** | `investigator@scrb.demo` | Core dashboards, search, analysis, maps, workspaces, and reports |
-| **Supervisor** | `supervisor@scrb.demo` | Investigator capabilities plus restricted network and audit views |
-| **Admin** | `admin@scrb.demo` | Full prototype access |
+| Investigator | `investigator@scrb.demo` | `scrb2024` |
+| Supervisor | `supervisor@scrb.demo` | `scrb2024` |
+| Administrator | `admin@scrb.demo` | `scrb2024` |
 
-> These accounts exist for evaluation only. Replace demo credentials and fallback authentication before real-world use.
+> The prototype uses synthetic demonstration records. It contains no real victim, suspect, citizen, FIR, or operational police data.
 
-## 🚀 Quick start
+## Intelligence command center
+
+### Discover
+
+| Module | Operational value |
+|---|---|
+| **Command Dashboard** | Statewide KPIs, district comparisons, crime distribution, recent activity, and warning summaries |
+| **Intelligence Search** | Multi-field discovery across FIRs and operational metadata |
+| **AI Intelligence Assistant** | Natural-language analysis grounded in relevant synthetic records, with reasoning and sources |
+| **Hotspot Map** | Interactive geographic visualization of incident concentration and intensity |
+| **Crime Trends** | District, crime-type, and date-range patterns over time |
+
+### Connect
+
+| Module | Operational value |
+|---|---|
+| **Case Correlation** | Multi-factor similarity across geography, time, offence type, and MO indicators |
+| **Network Analysis** | Visual exploration of relationships between people, incidents, and entities |
+| **MO Intelligence** | Recurring modus-operandi profiles with related-case navigation |
+| **Socioeconomic Context** | Carefully framed, non-causal associations between context and recorded crime density |
+
+### Anticipate
+
+| Module | Operational value |
+|---|---|
+| **Anomaly Alerts** | Detects unusual volume, location, time, and recurring-MO patterns |
+| **Early Warnings** | Surfaces signals that deserve analyst review before routine reporting catches up |
+| **Explainable Risk** | Area risk from 0–100 with visible contributing factors—not an unexplained score |
+
+### Act and account
+
+| Module | Operational value |
+|---|---|
+| **Investigation Workspace** | Connects FIRs, persons, MO findings, notes, and evidence in one case workspace |
+| **Intelligence Briefs** | Generates structured, evidence-grounded reports for review and export |
+| **Audit Trail** | Records user activity for supervisory accountability |
+| **Role-Aware Access** | Separates Investigator, Supervisor, and Admin experiences |
+
+## What makes it different
+
+- **Intelligence, not another dashboard.** Modules form a continuous workflow from discovery to investigation and reporting.
+- **Explainability by design.** Correlations and risk signals expose the factors behind them.
+- **Grounded AI.** Gemini improves the language of an answer but is instructed to preserve the application’s evidence, identifiers, and numerical findings.
+- **Resilient demonstration.** Deterministic analysis and synthetic fallbacks keep core workflows functional if an external AI service or database is unavailable.
+- **Human authority remains final.** Signals support professional judgment; they do not determine guilt or trigger automated enforcement.
+- **Designed for operational roles.** Investigators explore, supervisors review, and administrators retain governance visibility.
+
+## From record to responsible action
+
+```mermaid
+flowchart LR
+    A[Unified Crime Records] --> B[Search & Explore]
+    B --> C[Hotspots & Trends]
+    B --> D[Case Correlation]
+    B --> E[Entity Networks]
+    C --> F[Anomaly & Risk Signals]
+    D --> F
+    E --> F
+    F --> G[Investigation Workspace]
+    G --> H[Evidence-grounded Brief]
+    H --> I[Human Review]
+    I --> J[Accountable Action]
+```
+
+## System architecture
+
+```mermaid
+flowchart TB
+    UI[React 19 + TypeScript Interface]
+    API[Express Intelligence API]
+    AUTH[JWT + Role-aware Access]
+    ENGINE[Correlation · Risk · MO · Search · Reporting]
+    AI[Grounded Gemini Enhancement]
+    DB[(PostgreSQL + Prisma)]
+    DEMO[(Synthetic In-memory Engine)]
+
+    UI -->|Same-origin /api| API
+    API --> AUTH
+    API --> ENGINE
+    ENGINE --> DB
+    ENGINE --> DEMO
+    ENGINE --> AI
+    AI -->|Evidence-preserving response| UI
+```
+
+The production service runs the compiled React client and Express API together. This gives the prototype one origin, protected server-side AI credentials, SPA deep-link support, and a single deployable runtime.
+
+## Technology
+
+| Layer | Stack |
+|---|---|
+| Frontend | React 19, TypeScript, Vite, Wouter, TanStack Query |
+| Experience | Tailwind CSS v4, shadcn/ui, Radix UI, Framer Motion, Lucide |
+| Visualization | Recharts, Leaflet, React Leaflet, React Force Graph |
+| Backend | Node.js 24 on Catalyst, Express, TypeScript, Zod |
+| Data | PostgreSQL, Prisma ORM, synthetic/in-memory fallback |
+| Security | JWT, bcrypt, protected routes, role-aware workflows |
+| Intelligence | Deterministic analytics with optional Google Gemini enhancement |
+| Export | jsPDF and html2canvas-pro |
+| Deployment | Zoho Catalyst AppSail, pnpm workspaces |
+
+## Quick start
 
 ### Prerequisites
 
-- Node.js 22
+- Node.js 22 or newer
 - pnpm
-- PostgreSQL is optional for the fallback demo and recommended for persistence
+- PostgreSQL is optional for the fallback demonstration and recommended for persistent environments
 
 ### Install and run
 
@@ -169,11 +184,11 @@ pnpm install --frozen-lockfile
 pnpm dev:all
 ```
 
-Open `http://localhost:5173` unless your environment selects another port.
+Open `http://localhost:5173` unless Vite selects another available port.
 
-### Environment variables
+### Environment
 
-Create `server/.env` for the API:
+Create `server/.env`:
 
 ```env
 DATABASE_URL="postgresql://postgres:postgres@localhost:5432/scrb_sanket?schema=public"
@@ -182,23 +197,16 @@ DEMO_AUTH_SECRET="replace-with-a-long-random-secret"
 GEMINI_API_KEY=""
 ```
 
-For optional browser speech-to-text, create `artifacts/scrb-sanket/.env.local`:
+For browser speech-to-text, create `artifacts/scrb-sanket/.env.local`:
 
 ```env
 VITE_SARVAM_API_KEY=""
 VITE_API_MODE="local"
 ```
 
-Use `VITE_API_MODE=local` (the default) for a static prototype deployment.
-Use `VITE_API_MODE=server` when the Express service is deployed alongside the frontend.
+Use `VITE_API_MODE=local` for the static demonstration or `VITE_API_MODE=server` when the client is served with Express.
 
-Generate a secure JWT signing secret with:
-
-```bash
-openssl rand -hex 32
-```
-
-### Initialize PostgreSQL
+### Optional PostgreSQL setup
 
 ```bash
 pnpm --filter server prisma:generate
@@ -206,78 +214,61 @@ pnpm --filter server db:push
 pnpm --filter server db:seed
 ```
 
-## 📦 Production deployment
-
-SCRB-Sanket ships as a single deployable service.
+## Build and deployment
 
 ```bash
-pnpm install --frozen-lockfile
 pnpm build
 pnpm start
 ```
 
-Recommended platform configuration:
-
 | Setting | Value |
 |---|---|
-| Runtime | Node.js 22 |
-| Install command | `pnpm install --frozen-lockfile` |
-| Build command | `pnpm build` |
-| Run command | `pnpm start` |
+| Runtime | Node.js 24 |
+| Startup command | `node server/dist/index.js` |
+| Application port | `X_ZOHO_CATALYST_LISTEN_PORT` or `PORT` |
 | Health endpoint | `/health` |
+| Live platform | Zoho Catalyst AppSail |
 
-After deployment, verify `/`, `/dashboard`, `/assets/*`, and `/health`. See [DEPLOYMENT.md](./DEPLOYMENT.md) for the complete checklist.
+See [DEPLOYMENT.md](DEPLOYMENT.md) for the complete production checklist.
 
 ## Repository map
 
 ```text
 SCRB-Sanket/
-├── artifacts/
-│   └── scrb-sanket/        # React application
-├── lib/
-│   ├── api-client-react/    # Shared typed client
-│   ├── api-spec/            # OpenAPI contract and generation config
-│   └── api-zod/             # Shared validation schemas
+├── artifacts/scrb-sanket/   # React application and local demo engine
+├── lib/                      # Shared API clients, contracts, and schemas
 ├── server/
-│   ├── prisma/              # Data model and seed data
-│   └── src/                 # Express API, middleware, and analysis services
-├── docs/assets/             # Repository media
-├── DEPLOYMENT.md            # Production checklist
-└── pnpm-workspace.yaml      # Monorepo definition
+│   ├── prisma/               # Relational data model and seed data
+│   └── src/                  # API, auth, middleware, and intelligence services
+├── docs/assets/              # Project media
+├── DEPLOYMENT.md             # Catalyst and production checklist
+└── pnpm-workspace.yaml       # Monorepo definition
 ```
-
-## API surface
-
-The application exposes grouped endpoints for:
-
-- authentication and health;
-- FIR retrieval, summaries, hotspots, trends, district and type breakdowns;
-- early warnings, network data, and audit history;
-- chat sessions and grounded analysis;
-- case correlations, MO profiles, anomalies, alerts, and risk scoring;
-- intelligence search, workspaces, reports, and socioeconomic context.
-
-Protected endpoints require a bearer token. Supervisory screens additionally enforce role checks in the client and API workflow.
 
 ## Trust, safety, and responsible use
 
 > [!IMPORTANT]
-> SCRB-Sanket is a Datathon prototype, not a production policing system.
+> SCRB-Sanket is a decision-support prototype—not an autonomous policing, guilt-assessment, or individual-prediction system.
 
-- Every included incident and person is **synthetic**.
-- The application must not be used to infer guilt, predict individual criminality, or make automated enforcement decisions.
-- Socioeconomic outputs are explicitly **correlational, not causal**.
-- Risk scores are decision-support signals and expose their factor contributions.
-- Human review, legal authorization, data minimization, access controls, retention rules, and independent bias testing are mandatory before real deployment.
-- Client-visible API keys must be restricted; secrets belong in the hosting platform’s secret manager, never in Git.
+- All included crime and person records are **synthetic**.
+- Risk scores describe area-level analytical signals and expose their contributing factors.
+- Socioeconomic results are **correlational, not causal**.
+- AI output must remain tied to available evidence and be verified by a human investigator.
+- Real deployment requires lawful authority, data minimization, retention controls, access review, security testing, and independent bias evaluation.
+- Secrets are stored server-side in the hosting platform and never committed to Git.
 
-## Datathon recognition
+## Recognition
 
-SCRB-Sanket was built for **Datathon 2026** and shortlisted for its next evaluation phase. The project demonstrates how an explainable, analyst-centered interface can bring together multiple crime-intelligence workflows while remaining transparent about data provenance and limitations.
+SCRB-Sanket was shortlisted for the next evaluation phase of **KSP Datathon 2026**. The prototype demonstrates how fragmented records can become useful, explainable, and reviewable intelligence while preserving human accountability.
 
 ## Team
 
-Built by **Nanak Tekchandani and team** for Karnataka State Police × Hack2skill Datathon 2026.
+| | |
+|---|---|
+| **Team** | Token Burners |
+| **Team Lead** | Puneet Sudam Dhongade |
+| **Team Size** | 3 |
+| **Challenge** | Current systems rely on siloed data and manual reporting, limiting advanced analytics and proactive policing capabilities. |
 
 ---
 
@@ -285,8 +276,10 @@ Built by **Nanak Tekchandani and team** for Karnataka State Police × Hack2skill
 
 ### संकेत · SCRB-Sanket
 
-**From records to signals. From signals to responsible action.**
+**See the signal. Understand the evidence. Keep humans accountable.**
 
-<sub>Built with purpose for safer, smarter, and more accountable public service.</sub>
+<sub>Built with purpose for safer, smarter, and more responsible public service.</sub>
+
+[Launch Prototype](https://scrb-sanket-v2-50045404109.development.catalystappsail.in/) · [Watch Demo](https://drive.google.com/file/d/1UXoEyusXB1T5lh_U_HvbBr2uTIA9awe4/view?usp=sharing)
 
 </div>
